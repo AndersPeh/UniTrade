@@ -35,3 +35,5 @@ The platform is built as a full-stack, decoupled application. The backend is a s
 ### Architecture
 
 The backend follows a classic layered **Controller-Service-Repository** architecture to ensure a clean separation of concerns. The frontend is built on a **component-based architecture**, making the UI modular and easy to maintain. All communication between the two happens via a **REST API using JSON**.
+
+### Edit 1 by ansntu
