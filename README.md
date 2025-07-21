@@ -1,10 +1,10 @@
 # 🚀 UniTrade: Your Campus Marketplace
 
-UniTrade is a full-stack e-commerce platform built for students, by students. It's designed to be the go-to place for buying and selling second-hand goods—like textbooks, furniture, and electronics—within a trusted platform across universities. It's built with a modern, robust tech stack designed for security, scalability, and a slick user experience.
+UniTrade is a full-stack e-commerce platform built for students, by students. It's designed to be the go-to place for buying and selling second-hand goods such as textbooks, furniture, and electronics—within a trusted platform across universities. It's built with a modern, robust tech stack designed for security, scalability, and a slick user experience.
 
 ## 🤔 The Problem
 
-Let's be real—student life is expensive. We often need things for a short time and have perfectly good stuff to sell when we're done with it. But finding a buyer or seller on campus is a pain. You either shout into the void on social media or deal with the chaos of public marketplaces.
+Let's be real, student life is expensive. We often need things for a short time and have perfectly good stuff to sell when we're done with it. But finding a buyer or seller on campus is a pain. You either shout into the void on social media or deal with the chaos of public marketplaces.
 
 UniTrade cuts through the noise by creating a dedicated, student-only space for these exchanges.
 
