@@ -40,4 +40,5 @@ The backend follows a classic layered **Controller-Service-Repository** architec
 
 This use case illustrates the core functions of Unitrade e-commerce platform and how it interacts with different actors, which include two main actors (User and Admin), and external actor (payment system). Users can browse through products, manage their user account, and update product cart after user log in to their account. The operation includes adding product to cart, deleting product from cart, and changing quantity of each product in cart. Once the user is ready, they will place an order and proceed to payment. Admin will use their account to manage product inventory through adding, removing, and updating product information.
 
-<img width="780" height="681" alt="use_case_online_shop drawio (1)" src="https://github.com/user-attachments/assets/246dbe37-4631-48a9-b7c3-a3fc2400192e" />
+<img width="850" height="1100" alt="use_case_online_shop drawio (3)" src="https://github.com/user-attachments/assets/8481ee59-f716-43cd-abb3-6f3b12647f46" />
+
