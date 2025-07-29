@@ -35,3 +35,9 @@ The platform is built as a full-stack, decoupled application. The backend is a s
 ### Architecture
 
 The backend follows a classic layered **Controller-Service-Repository** architecture to ensure a clean separation of concerns. The frontend is built on a **component-based architecture**, making the UI modular and easy to maintain. All communication between the two happens via a **REST API using JSON**.
+
+### Use Case Diagram
+
+This use case illustrates the core functions of Unitrade e-commerce platform and how it interacts with different actors, which include two main actors (User and Admin), and external actor (payment system). Users can browse through products, manage their user account, and update product cart after user log in to their account. The operation includes adding product to cart, deleting product from cart, and changing quantity of each product in cart. Once the user is ready, they will place an order and proceed to payment. Admin will use their account to manage product inventory through adding, removing, and updating product information.
+
+<img width="780" height="681" alt="use_case_online_shop drawio (1)" src="https://github.com/user-attachments/assets/246dbe37-4631-48a9-b7c3-a3fc2400192e" />
