@@ -30,11 +30,11 @@ public class Product {
 // These fields are mapped to columns in the database by JPA automatically because of @Entity.
     private String name;
     private String brand;
-    private Float price;
+    private BigDecimal price;
     private Integer inventory;
     private String description;
 
-// Tell JPA to define Many to One relationship between Product and Category.
+// Tell JPA to define Many-to-One relationship between Product and Category.
 // Many Products belong to one Category.
 // Hibernate implements this relationship mapping in the database.
 // CascadeType.ALL means actions on Product entity will be done automatically on associated entities.
@@ -62,7 +62,7 @@ public class Product {
 
 // Constructor excluding Id and images. Because Id is automatically generated and images is optional.
 // Everything in the constructor must be provided when creating Product.
-    public Product(String name, String brand, Float price, Integer inventory, String description, Category category) {
+    public Product(String name, String brand, BigDecimal price, Integer inventory, String description, Category category) {
         this.name = name;
         this.brand = brand;
         this.price = price;
