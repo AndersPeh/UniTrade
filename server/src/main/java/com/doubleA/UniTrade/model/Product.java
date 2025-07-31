@@ -6,7 +6,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 // use Lombok Getter and Setter to reduce the boilerplate of writing Getter and Setter repeatedly for each field.
 @Getter
@@ -59,6 +61,14 @@ public class Product {
 // the image will not be associated with Product but still exist in the Image entity.
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Image> images;
+
+// Product is the inverse side, when it is deleted, associated CartItem should also be deleted.
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<CartItem> cartItems=new HashSet<>();
+
+// Product is the inverse side, when it is deleted, associated OrderItem should also be deleted.
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<OrderItem> orderItems= new HashSet<>();
 
 // Constructor excluding Id and images. Because Id is automatically generated and images is optional.
 // Everything in the constructor must be provided when creating Product.

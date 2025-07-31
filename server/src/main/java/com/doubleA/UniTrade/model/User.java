@@ -54,6 +54,8 @@ public class User {
 // role_id of user_roles JoinTable refers to id in Role entity.
             inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id")
     )
+// This Many to Many with Join table method can't store additional information,
+// it can only store user_id and role_id. Need to use Many to Many via explicit entity like CartItem to store more infomation.
     private Collection<Role> roles = new HashSet<>();
 }
 
