@@ -22,6 +22,7 @@ public class Category {
 // No CascadeType.ALL because it doesnt make sense to delete a category,
 // then all associated products are deleted.
 // As long as a product is still referring to a category, the category can't be deleted due to referential integrity.
+// category is placed in Product (owning) side as foreign key to establish the One Category to Many Product relationship.
     @OneToMany(mappedBy = "category")
     private List<Product> products;
 
