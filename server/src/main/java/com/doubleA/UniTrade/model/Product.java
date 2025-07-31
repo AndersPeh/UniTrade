@@ -63,12 +63,12 @@ public class Product {
     private List<Image> images;
 
 // Product is the inverse side, when it is deleted, associated CartItem should also be deleted.
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<CartItem> cartItems=new HashSet<>();
+//    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private Set<CartItem> cartItems=new HashSet<>();
 
 // Product is the inverse side, when it is deleted, associated OrderItem should also be deleted.
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<OrderItem> orderItems= new HashSet<>();
+//    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private Set<OrderItem> orderItems= new HashSet<>();
 
 // Constructor excluding Id and images. Because Id is automatically generated and images is optional.
 // Everything in the constructor must be provided when creating Product.

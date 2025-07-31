@@ -13,7 +13,7 @@ import java.sql.Blob;
 @NoArgsConstructor
 @Entity
 
-// AllArgsConstructor because poduct is compulsory to have when creating Image entity.
+// AllArgsConstructor because product is compulsory to have when creating Image entity.
 @AllArgsConstructor
 
 public class Image {
@@ -25,7 +25,7 @@ public class Image {
     private String fileType;
 
 // Tells JPA to store the image property as a Large Object (LOB),
-// because images can be larged and cant be stored as regular columns.
+// because images can be large and cant be stored as regular columns.
     @Lob
     private Blob image;
     private String downloadUrl;
