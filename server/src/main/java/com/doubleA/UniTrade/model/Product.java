@@ -59,4 +59,15 @@ public class Product {
 // the image will not be associated with Product but still exist in the Image entity.
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Image> images;
+
+// Constructor excluding Id and images. Because Id is automatically generated and images is optional.
+// Everything in the constructor must be provided when creating Product.
+    public Product(String name, String brand, Float price, Integer inventory, String description, Category category) {
+        this.name = name;
+        this.brand = brand;
+        this.price = price;
+        this.inventory = inventory;
+        this.description = description;
+        this.category = category;
+    }
 }
