@@ -23,4 +23,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 // products. As long as the user enters name that matches any part of the product name, results will be returned.
     @Query("SELECT p FROM Product p WHERE LOWER(p.name) LIKE LOWER(CONCAT('%', :name, '%'))")
     List<Product> findByName(String name);
+
+
+    boolean existsByNameAndBrand(String name, String brand);
 }
