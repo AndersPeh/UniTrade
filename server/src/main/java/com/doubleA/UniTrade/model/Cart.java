@@ -34,4 +34,14 @@ public class Cart {
 // Cart is the inverse side, when it is deleted, associated CartItem should also be deleted.
     @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<CartItem> items = new HashSet<>();
+
+    public void removeItem(CartItem cartItem) {
+        this.items.remove(cartItem);
+        cartItem.setCart(null);
+        updateTotalAmount();
+    }
+
+    private void updateTotalAmount() {
+
+    }
 }

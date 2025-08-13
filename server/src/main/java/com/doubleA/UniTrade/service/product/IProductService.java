@@ -2,6 +2,7 @@ package com.doubleA.UniTrade.service.product;
 
 import com.doubleA.UniTrade.model.Product;
 import com.doubleA.UniTrade.request.AddProductRequest;
+import com.doubleA.UniTrade.request.ProductUpdateRequest;
 
 import java.util.List;
 
@@ -13,7 +14,7 @@ public interface IProductService {
 // to know what to expect.
 // addProduct, updateProduct and getProductById return Product object.
     Product addProduct(AddProductRequest request);
-    Product updateProduct(Product product, Long productId);
+    Product updateProduct(ProductUpdateRequest product, Long productId);
     Product getProductById(Long productId);
 
 // deleteProductById has nothing to return.
