@@ -6,6 +6,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
+//Interface for ImageService
+
 public interface IImageService {
     Image getImageById(Long imageId);
     void deleteImageById(Long imageId);
