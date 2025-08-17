@@ -1,12 +1,19 @@
 package com.doubleA.UniTrade.service.product;
 
-import com.doubleA.UniTrade.model.Product;
+import com.doubleA.UniTrade.model.*;
 import com.doubleA.UniTrade.repository.ProductRepository;
+import com.doubleA.UniTrade.repository.CategoryRepository;
+import com.doubleA.UniTrade.repository.CartItemRepository;
+import com.doubleA.UniTrade.repository.OrderItemRepository;
+import com.doubleA.UniTrade.request.AddProductRequest;
+import com.doubleA.UniTrade.request.ProductUpdateRequest;
+import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 // this marks ProductService as a service bean so it will be used as
 // concrete instance of IProductService in dependency injection.
@@ -35,20 +42,105 @@ public class ProductService implements IProductService{
 // It inherits from JpaRepository, so it will be added to the constructor parameter
 // for dependency injection to be assigned value.
     private final ProductRepository productRepository;
+    private final CategoryRepository categoryRepository;
+    private final CartItemRepository cartItemRepository;
+    private final OrderItemRepository orderItemRepository;
 
+// Change from receive product repository to receive AddProductRequest since we want to check if the new product.
+// already exist in the database before adding it.
+// The change also extend to addProduct method in iProductService interface.
+// It will also check whether the category already exists in the database or not.
+// Optional.ofNullable is used to handle the case where the category might not be found in the database.
+// If it does not exist, it will create a new category (through orElseGet()) and save it to the database
+// before set category in product.
+// If the category already exists, it will use the existing category from the database.
     @Override
-    public Product addProduct(Product product) {
-        return null;
+    public Product addProduct(AddProductRequest request) {
+        if (productExists(request.getName(), request.getBrand())){
+            throw new EntityExistsException(request.getName() + "already exists in the database.");
+        }
+        Category category = Optional.ofNullable(categoryRepository.findByName(request.getCategory().getName()))
+                .orElseGet(() -> {;
+                    Category newCategory = new Category(request.getCategory().getName());
+                    return categoryRepository.save(newCategory);
+                });
+        request.setCategory(category);
+        return productRepository.save(createProduct(request, category));
     }
 
-    @Override
-    public Product updateProduct(Product product, Long productId) {
-        return null;
+    private boolean productExists(String name, String brand) {
+        return productRepository.existsByNameAndBrand(name, brand);
     }
 
+    private Product createProduct(AddProductRequest request, Category category) {
+        return new Product(
+                request.getName(),
+                request.getBrand(),
+                request.getPrice(),
+                request.getInventory(),
+                request.getDescription(),
+                category
+        );
+    }
+
+// updateProduct define the logic to update an existing product.
+// It takes ProductUpdateRequest and productId as parameters.
+// It first checks if the product with the given productId exists in the database.
+// If it exists, it updates the existing product with the new values from ProductUpdateRequest using updateExistingProduct method.
+// It then saves the updated product back to the database using productRepository.save().
+// If it does not exist, it throws an EntityNotFoundException.
+    @Override
+    public Product updateProduct(ProductUpdateRequest request, Long productId) {
+        return productRepository.findById(productId)
+                .map(existingProduct -> updateExistingProduct(existingProduct, request))
+                .map(productRepository :: save)
+                .orElseThrow(() -> new EntityNotFoundException("Product not found!"));
+    }
+// updateExistingProduct is a private method that takes an existing Product and a ProductUpdateRequest.
+// It updates the fields of the existing Product with the values receive from the ProductUpdateRequest.
+// It also retrieves the Category by name from the categoryRepository and sets it to the existing Product.
+// Finally, it returns the updated Product object.
+    // will update comment again later
+    private Product updateExistingProduct(Product existingProduct, ProductUpdateRequest request) {
+        existingProduct.setName(request.getName());
+        existingProduct.setBrand(request.getBrand());
+        existingProduct.setPrice(request.getPrice());
+        existingProduct.setInventory(request.getInventory());
+        existingProduct.setDescription(request.getDescription());
+        Category category = categoryRepository.findByName(request.getCategory().getName());
+        existingProduct.setCategory(category);
+        return existingProduct;
+    }
+
+// deleteProductById defines the logic to delete a product by its ID.
+// It first checks if the product with the given productId exists in the database.
+// If it exists, it retrieves the associated CartItems and OrderItems.
+// For each CartItem, it removes the CartItem from the Cart and deletes the CartItem from the database.
+// For each OrderItem, it sets the product to null and saves the OrderItem back to the database.
+// It then removes the product from its associated Category (if it exists) and sets the product's category to null.
+// Finally, it deletes the product from the database.
+    // will update comment again later
     @Override
     public void deleteProductById(Long productId) {
+        productRepository.findById(productId).ifPresentOrElse(product -> {
+            List<CartItem> cartItems = cartItemRepository.findByProductId(productId);
+            cartItems.forEach(cartItem -> {
+                Cart cart = cartItem.getCart();
+                cart.removeItem(cartItem);
+                cartItemRepository.delete(cartItem);
+            });
+            List<OrderItem> orderItems = orderItemRepository.findByProductId(productId);
+            orderItems.forEach(orderItem -> {
+                orderItem.setProduct(null);
+                orderItemRepository.save(orderItem);
+            });
 
+            Optional.ofNullable(product.getCategory()).ifPresent(category -> category.getProducts().remove(product));
+            product.setCategory(null);
+            productRepository.deleteById(product.getId());
+        }, () -> {;
+            throw new EntityNotFoundException("Product not found.");
+        });
     }
 
     @Override
