@@ -3,6 +3,7 @@ package com.doubleA.UniTrade.service.product;
 import com.doubleA.UniTrade.model.Product;
 import com.doubleA.UniTrade.request.AddProductRequest;
 import com.doubleA.UniTrade.request.ProductUpdateRequest;
+import com.doubleA.UniTrade.dtos.ProductDto;
 
 import java.util.List;
 
@@ -31,9 +32,16 @@ public interface IProductService {
 
     List<Product>getProductsByName(String name);
 
+    List<Product> findDistinctProductsByName();
+
     List<Product>getProductsByBrandAndName(String brand, String name);
 
+    List<ProductDto> getConvertedProducts(List<Product> products);
+
+    ProductDto convertToDto(Product product);
 }
+
+
 
 
 

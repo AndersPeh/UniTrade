@@ -1,19 +1,22 @@
 package com.doubleA.UniTrade.service.product;
 
 import com.doubleA.UniTrade.model.*;
-import com.doubleA.UniTrade.repository.ProductRepository;
-import com.doubleA.UniTrade.repository.CategoryRepository;
-import com.doubleA.UniTrade.repository.CartItemRepository;
-import com.doubleA.UniTrade.repository.OrderItemRepository;
+import com.doubleA.UniTrade.dtos.ImageDto;
+import com.doubleA.UniTrade.dtos.ProductDto;
+import com.doubleA.UniTrade.repository.*;
 import com.doubleA.UniTrade.request.AddProductRequest;
 import com.doubleA.UniTrade.request.ProductUpdateRequest;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 // this marks ProductService as a service bean so it will be used as
 // concrete instance of IProductService in dependency injection.
@@ -45,6 +48,8 @@ public class ProductService implements IProductService{
     private final CategoryRepository categoryRepository;
     private final CartItemRepository cartItemRepository;
     private final OrderItemRepository orderItemRepository;
+    private final ImageRepository imageRepository;
+    private final ModelMapper modelMapper;
 
 // Change from receive product repository to receive AddProductRequest since we want to check if the new product.
 // already exist in the database before adding it.
@@ -57,7 +62,7 @@ public class ProductService implements IProductService{
     @Override
     public Product addProduct(AddProductRequest request) {
         if (productExists(request.getName(), request.getBrand())){
-            throw new EntityExistsException(request.getName() + "already exists in the database.");
+            throw new EntityExistsException(request.getName() + " already exists in the database.");
         }
         Category category = Optional.ofNullable(categoryRepository.findByName(request.getCategory().getName()))
                 .orElseGet(() -> {;
@@ -174,9 +179,36 @@ public class ProductService implements IProductService{
     public List<Product> getProductsByName(String name) {
         return productRepository.findByName(name);
     }
+    @Override
+    public List<Product> findDistinctProductsByName(){
+        List<Product> products = getAllProducts();
+        Map<String, Product> distinctProductMap = products.stream()
+                .collect(Collectors.toMap(
+                        Product :: getName,
+                        product -> product,
+                        (existing, replacement) -> existing));
+        return new ArrayList<>(distinctProductMap.values());
+    }
 
     @Override
     public List<Product> getProductsByBrandAndName(String brand, String name) {
         return productRepository.findByBrandAndName(brand, name);
+    }
+    @Override
+    public List<ProductDto> getConvertedProducts(List<Product> products) {
+        return products.stream().map(this::convertToDto).toList();
+    }
+
+    // convertToDto converts a Product object to a ProductDto object using ModelMapper.
+    //
+    @Override
+    public ProductDto convertToDto(Product product) {
+        ProductDto productDto = modelMapper.map(product, ProductDto.class);
+        List<Image> images = imageRepository.findByProductId(product.getId());
+        List<ImageDto> imageDtos = images.stream()
+                .map(image -> modelMapper.map(image, ImageDto.class))
+                .toList();
+        productDto.setImages(imageDtos);
+        return productDto;
     }
 }
