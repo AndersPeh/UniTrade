@@ -13,16 +13,10 @@ import java.math.BigDecimal;
 // The fields are annotated with @Data from Lombok to generate boilerplate code like getters and setters.
 @Data
 public class AddProductRequest {
-    private Long id;
-
     private String name;
     private String brand;
     private BigDecimal price;
     private Integer inventory;
     private String description;
-
-    @ManyToOne(cascade = CascadeType.ALL)
-
-    @JoinColumn(name = "category_id")
     private Category category;
 }

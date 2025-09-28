@@ -14,26 +14,26 @@ import java.util.Optional;
 @Service
 
 // It automatically generates a constructor and store properties marked with final or nonnull
-// as fields and parameters (to be assigned value through dependency injection).
-// In that constructor, it injects CategoryRepository (it is marked as spring bean)
-// and assign it to categoryRepository of CategoryService so CategoryService can interact with the database.
+// as fields (to be assigned value through dependency injection).
+// In that constructor, it injects CategoryRepository (marked as spring bean)
+// and assign it to categoryRepository so CategoryService can interact with the database.
 @RequiredArgsConstructor
 
 public class CategoryService implements ICategoryService{
 
     private final CategoryRepository categoryRepository;
 
-    // This method adds a new category to the database.
     // It checks if the category already exists by its name.
     // If it does not exist, it saves the new category.
-    // If it does exist, it throws an EntityExistsException with a message indicating the category
+    // If it exists, it throws an EntityExistsException with a message indicating the category
     // that already exists.
     // Use Optional to indicated that the category might not be present in the database.
     @Override
     public Category addCategory(Category category) {
-        return Optional.of(category).filter(category1 -> !categoryRepository.existsByName(category1.getName()))
+        return Optional.of(category)
+                .filter(requestCategory -> !categoryRepository.existsByName(requestCategory.getName()))
                 .map(categoryRepository :: save)
-                .orElseThrow(() -> new EntityExistsException(category.getName() + "Category already exists"));
+                .orElseThrow(() -> new EntityExistsException(category.getName() + " category already exists"));
     }
     // This method update category information.
     // It first checks if the category with the given ID exists in the database.
@@ -44,7 +44,7 @@ public class CategoryService implements ICategoryService{
         return Optional.ofNullable(findCategoryById(categoryId)).map(oldCategory -> {
             oldCategory.setName(category.getName());
             return categoryRepository.save(oldCategory);
-        }).orElseThrow(() -> new EntityNotFoundException("Category not found"));
+        }).orElseThrow(() -> new EntityNotFoundException("Category not found."));
     }
 
     @Override

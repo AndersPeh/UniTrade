@@ -27,7 +27,7 @@ public class ImageService implements IImageService{
     @Override
     public Image getImageById(Long imageId) {
         return imageRepository.findById(imageId)
-                .orElseThrow(() -> new EntityNotFoundException("Image not found!"));
+                .orElseThrow(() -> new EntityNotFoundException("Image not found."));
     }
 
     @Override
@@ -62,6 +62,8 @@ public class ImageService implements IImageService{
     @Override
     public List<ImageDto> saveImages(Long productId, List<MultipartFile> files) {
         Product product = productService.getProductById(productId);
+
+        // It contains a list of saved ImageDto returned after saving to imageRepository.
         List <ImageDto> savedImages = new ArrayList<>();
 
         for(MultipartFile file : files){

@@ -11,6 +11,14 @@ import java.util.List;
 // for Product entities, using Long as the primary key type.
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
+    // JPA uses a method naming convention to automatically generate queries by
+    // following this pattern [prefix][Subject: optional]By[Predicate].
+    // For example, findByCategoryNameAndBrand.
+    // findBy will find Product entities (based on ProductRepository).
+    // And logical operator to combine conditions.
+    // CategoryName: filter by the name property of the associated Category entity.
+    // Brand filter by the brand property of Product entity.
+
     List<Product> findByCategoryNameAndBrand(String category, String brand);
 
     List<Product> findByCategoryName(String category);
