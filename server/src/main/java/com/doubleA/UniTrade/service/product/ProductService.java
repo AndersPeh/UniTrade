@@ -218,8 +218,7 @@ public class ProductService implements IProductService{
         return products.stream().map(this::convertToDto).toList();
     }
 
-    // convertToDto converts a Product object to a ProductDto object using ModelMapper.
-    //
+    // converts a Product object to a ProductDto object using ModelMapper.
     @Override
     public ProductDto convertToDto(Product product) {
         ProductDto productDto = modelMapper.map(product, ProductDto.class);

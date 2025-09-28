@@ -5,7 +5,8 @@ import lombok.Data;
 
 //This class represents a generic API response structure.
 // It contains a message and data field to encapsulate the response information.
-// Theis function is for successful API responses, providing a consistent format for returning data to the client.
+// This function is for successful API responses, providing a consistent format
+// for returning data to the client.
 @Data
 @AllArgsConstructor
 public class ApiResponse {
