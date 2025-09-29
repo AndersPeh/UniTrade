@@ -1,5 +1,6 @@
 package com.doubleA.UniTrade.controller;
 
+import com.doubleA.UniTrade.dtos.UserDto;
 import com.doubleA.UniTrade.model.User;
 import com.doubleA.UniTrade.request.CreateUserRequest;
 import com.doubleA.UniTrade.request.UpdateUserRequest;
@@ -18,20 +19,25 @@ public class UserController {
   @GetMapping("/user/{userId}/user")
   public ResponseEntity<ApiResponse> getUserById(@PathVariable Long userId) {
     User user = userService.getUserById(userId);
-    return ResponseEntity.ok(new ApiResponse("Success", user));
+    UserDto userDto = userService.convertToDto(user);
+    return ResponseEntity.ok(new ApiResponse("Success", userDto));
   }
 
   @PostMapping("/add")
   public ResponseEntity<ApiResponse> createUser(@RequestBody CreateUserRequest request) {
     User user = userService.createUser(request);
-    return ResponseEntity.ok(new ApiResponse("New User Creation Success", user));
+    UserDto userDto = userService.convertToDto(user);
+
+    return ResponseEntity.ok(new ApiResponse("New User Creation Success", userDto));
   }
 
   @PutMapping("/{userId}/update")
   public ResponseEntity<ApiResponse> updateUser(
       @PathVariable Long userId, @RequestBody UpdateUserRequest request) {
     User user = userService.updateUser(request, userId);
-    return ResponseEntity.ok(new ApiResponse("User Update Success", user));
+    UserDto userDto = userService.convertToDto(user);
+
+    return ResponseEntity.ok(new ApiResponse("User Update Success", userDto));
   }
 
   @DeleteMapping("/{userId}/delete")
