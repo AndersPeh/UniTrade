@@ -29,7 +29,7 @@ public class CategoryController {
   @PostMapping("/add")
   public ResponseEntity<ApiResponse> addCategory(@RequestBody Category category) {
     Category theCategory = categoryService.addCategory(category);
-    return ResponseEntity.ok(new ApiResponse("Success", theCategory));
+    return ResponseEntity.ok(new ApiResponse("Add Category Success", theCategory));
   }
 
   @GetMapping("/category/{id}/category")
@@ -48,12 +48,12 @@ public class CategoryController {
   public ResponseEntity<ApiResponse> updateCategory(
       @PathVariable Long id, @RequestBody Category category) {
     Category updatedCategory = categoryService.updateCategory(category, id);
-    return ResponseEntity.ok(new ApiResponse("Success", updatedCategory));
+    return ResponseEntity.ok(new ApiResponse("Category Update Success", updatedCategory));
   }
 
   @DeleteMapping("/category/{id}/delete")
   public ResponseEntity<ApiResponse> deleteCategory(@PathVariable Long id) {
     categoryService.deleteCategory(id);
-    return ResponseEntity.ok(new ApiResponse("Success", null));
+    return ResponseEntity.ok(new ApiResponse("Category Deletion Success", null));
   }
 }

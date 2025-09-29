@@ -41,7 +41,7 @@ public class ProductController {
   public ResponseEntity<ApiResponse> addProduct(@RequestBody AddProductRequest product) {
     Product theProduct = productService.addProduct(product);
     ProductDto productDto = productService.convertToDto(theProduct);
-    return ResponseEntity.ok(new ApiResponse("Add product success!", productDto));
+    return ResponseEntity.ok(new ApiResponse("Add Product Success", productDto));
   }
 
   @PutMapping("/product/{productId}/update")
@@ -49,13 +49,13 @@ public class ProductController {
       @RequestBody ProductUpdateRequest request, @PathVariable Long productId) {
     Product theProduct = productService.updateProduct(request, productId);
     ProductDto productDto = productService.convertToDto(theProduct);
-    return ResponseEntity.ok(new ApiResponse("Update product success!", productDto));
+    return ResponseEntity.ok(new ApiResponse("Update Product Success", productDto));
   }
 
   @DeleteMapping("/product/{productId}/delete")
   public ResponseEntity<ApiResponse> deleteProduct(@PathVariable Long productId) {
     productService.deleteProductById(productId);
-    return ResponseEntity.ok(new ApiResponse("Delete product success!", productId));
+    return ResponseEntity.ok(new ApiResponse("Delete Product Success", productId));
   }
 
   @GetMapping("/products/by/brand-and-name")

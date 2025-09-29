@@ -31,7 +31,7 @@ public class ImageController {
   public ResponseEntity<ApiResponse> uploadImages(
       @RequestParam("files") List<MultipartFile> files, @RequestParam("productId") Long productId) {
     List<ImageDto> imageDto = imageService.saveImages(productId, files);
-    return ResponseEntity.ok(new ApiResponse("Images uploaded successfully", imageDto));
+    return ResponseEntity.ok(new ApiResponse("Images Upload Success", imageDto));
   }
 
   @GetMapping("/image/download/{imageId}")
@@ -50,12 +50,12 @@ public class ImageController {
   public ResponseEntity<ApiResponse> updateImage(
       @PathVariable Long imageId, @RequestBody MultipartFile file) {
     imageService.updateImage(file, imageId);
-    return ResponseEntity.ok(new ApiResponse("Image updated successfully!", null));
+    return ResponseEntity.ok(new ApiResponse("Image Update Success", null));
   }
 
   @DeleteMapping("/image/{imageId}/delete")
   public ResponseEntity<ApiResponse> deleteImage(@PathVariable Long imageId) {
     imageService.deleteImageById(imageId);
-    return ResponseEntity.ok(new ApiResponse("Delete Image success!", null));
+    return ResponseEntity.ok(new ApiResponse("Image Deletion Success!", null));
   }
 }
