@@ -1,5 +1,6 @@
 package com.doubleA.UniTrade.service.order;
 
+import com.doubleA.UniTrade.dtos.OrderDto;
 import com.doubleA.UniTrade.enums.OrderStatus;
 import com.doubleA.UniTrade.model.Cart;
 import com.doubleA.UniTrade.model.Order;
@@ -9,7 +10,7 @@ import com.doubleA.UniTrade.repository.OrderRepository;
 import com.doubleA.UniTrade.repository.ProductRepository;
 import com.doubleA.UniTrade.service.cart.ICartService;
 import lombok.RequiredArgsConstructor;
-import org.aspectj.weaver.ast.Or;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -23,6 +24,7 @@ public class OrderService implements IOrderService {
   private final OrderRepository orderRepository;
   private final ProductRepository productRepository;
   private final ICartService cartService;
+  private final ModelMapper modelMapper;
 
   @Override
   public Order placeOrder(Long userId) {
@@ -75,7 +77,14 @@ public class OrderService implements IOrderService {
   }
 
   @Override
-  public List<Order> getUserOrders(Long userId) {
-    return orderRepository.findByUserId(userId);
+  public List<OrderDto> getUserOrders(Long userId) {
+    List<Order> orders = orderRepository.findByUserId(userId);
+
+    return orders.stream().map(this::convertToDto).toList();
+  }
+
+  @Override
+  public OrderDto convertToDto(Order order) {
+    return modelMapper.map(order, OrderDto.class);
   }
 }

@@ -1,5 +1,6 @@
 package com.doubleA.UniTrade.controller;
 
+import com.doubleA.UniTrade.dtos.OrderDto;
 import com.doubleA.UniTrade.model.Order;
 import com.doubleA.UniTrade.response.ApiResponse;
 import com.doubleA.UniTrade.service.order.IOrderService;
@@ -18,13 +19,13 @@ public class OrderController {
   @PostMapping("/user/order")
   public ResponseEntity<ApiResponse> placeOrder(@RequestParam Long userId) {
     Order order = orderService.placeOrder(userId);
-
-    return ResponseEntity.ok(new ApiResponse("Successful Order", order));
+    OrderDto orderDto = orderService.convertToDto(order);
+    return ResponseEntity.ok(new ApiResponse("Successful Order", orderDto));
   }
 
   @GetMapping("/user/{userId}/order")
   public ResponseEntity<ApiResponse> getUserOrders(@PathVariable Long userId) {
-    List<Order> orders = orderService.getUserOrders(userId);
+    List<OrderDto> orders = orderService.getUserOrders(userId);
 
     return ResponseEntity.ok(new ApiResponse("Success", orders));
   }

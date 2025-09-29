@@ -1,9 +1,6 @@
 package com.doubleA.UniTrade.service.user;
 
-import com.doubleA.UniTrade.dtos.ImageDto;
-import com.doubleA.UniTrade.dtos.ProductDto;
 import com.doubleA.UniTrade.dtos.UserDto;
-import com.doubleA.UniTrade.model.Image;
 import com.doubleA.UniTrade.model.User;
 import com.doubleA.UniTrade.repository.UserRepository;
 import com.doubleA.UniTrade.request.CreateUserRequest;
@@ -14,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
 // To be used as implementation class of IUserService.
