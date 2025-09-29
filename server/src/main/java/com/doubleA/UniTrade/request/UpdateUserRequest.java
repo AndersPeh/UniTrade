@@ -1,3 +1,9 @@
 package com.doubleA.UniTrade.request;
 
-public class UpdateUserRequest {}
+import lombok.Data;
+
+@Data
+public class UpdateUserRequest {
+  private String firstName;
+  private String lastName;
+}
