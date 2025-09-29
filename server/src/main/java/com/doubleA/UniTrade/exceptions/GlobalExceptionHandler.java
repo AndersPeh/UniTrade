@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-// Listens to exceptions form controllers
+// Listens to exceptions from controllers
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
