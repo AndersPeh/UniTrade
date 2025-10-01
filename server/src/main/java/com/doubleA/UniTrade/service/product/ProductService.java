@@ -237,6 +237,11 @@ public class ProductService implements IProductService {
   }
 
   @Override
+  public List<String> getAllDistinctBrands() {
+    return productRepository.findAll().stream().map(Product :: getBrand).distinct().toList();
+  }
+
+  @Override
   public List<Product> getProductsByBrandAndName(String brand, String name) {
     return productRepository.findByBrandAndName(brand, name);
   }

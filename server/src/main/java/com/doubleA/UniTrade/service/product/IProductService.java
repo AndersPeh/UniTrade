@@ -34,6 +34,8 @@ public interface IProductService {
 
     List<Product> findDistinctProductsByName();
 
+    List<String> getAllDistinctBrands();
+
     List<Product>getProductsByBrandAndName(String brand, String name);
 
     List<ProductDto> getConvertedProducts(List<Product> products);

@@ -101,4 +101,10 @@ public class ProductController {
     List<ProductDto> productDtos = productService.getConvertedProducts(products);
     return ResponseEntity.ok(new ApiResponse("Success", productDtos));
   }
+
+    @GetMapping("/distinct/brands")
+    public ResponseEntity<ApiResponse> getDistinctBrands() {
+
+        return ResponseEntity.ok(new ApiResponse("Success", productService.getAllDistinctBrands()));
+    }
 }
