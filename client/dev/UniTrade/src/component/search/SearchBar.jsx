@@ -1,8 +1,14 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllCategories } from "../../store/features/categorySlice";
+import {setSearchQuery, setSelectedCategory, clearFilters} from "../../store/features/searchSlice.js";
 
-const SearchBar = ({ onChange, onCategoryChange, onClear }) => {
+// Search bar component
+// This component will handle the search functionality
+// It accepts search query and category selection
+// and dispatches actions to update the Redux store
+// It also fetches all categories from the backend to populate the category dropdown
+const SearchBar = () => {
     const dispatch = useDispatch();
     const categories = useSelector((state) => state.category.categories);
     const { searchQuery, selectedCategory } = useSelector(
@@ -10,7 +16,14 @@ const SearchBar = ({ onChange, onCategoryChange, onClear }) => {
     );
 
     const handleCategoryChange = (e) => {
-        onCategoryChange(e.target.value);
+        dispatch(setSelectedCategory(e.target.value));
+    };
+
+    const handleClearFilters = () => {
+        dispatch(clearFilters());
+        }
+    const handleSearchQueryChange = (e) => {
+        dispatch(setSearchQuery(e.target.value));
     };
 
     useEffect(() => {
@@ -34,9 +47,9 @@ const SearchBar = ({ onChange, onCategoryChange, onClear }) => {
             <input
                 type='text'
                 value={searchQuery}
-                onChange={onChange}
+                onChange={handleSearchQueryChange}
                 className='form-control' placeholder='Search...' />
-        <button className='search-button' onClick={onClear}>
+        <button className='search-button' onClick={handleClearFilters}>
             Clear Filter
         </button>
     </div>

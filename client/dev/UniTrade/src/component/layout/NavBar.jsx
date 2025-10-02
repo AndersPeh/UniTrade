@@ -2,6 +2,9 @@ import React from "react";
 import {Navbar, Nav, NavDropdown, Container} from "react-bootstrap";
 import { Link } from "react-router-dom";
 
+// Main navigation bar component
+// Contains links to different sections of the site
+// Also includes an account dropdown for user actions
 const NavBar = () => {
     return (
         <Navbar expand='lg' sticky='top' className='nav-bg'>
@@ -18,7 +21,7 @@ const NavBar = () => {
                 <Navbar.Collapse>
 
                     <Nav className='me-auto'>
-                        <Nav.Link to={"#"} as={Link}>
+                        <Nav.Link to={"/products"} as={Link}>
                             All Products
                         </Nav.Link>
                     </Nav>

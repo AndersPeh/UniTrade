@@ -236,6 +236,13 @@ public class ProductService implements IProductService {
     return new ArrayList<>(distinctProductMap.values());
   }
 
+  // This method retrieves all products from the product repository, extracts their brand names,
+  // removes duplicates using distinct(), and collects the unique brand names into a list.
+  @Override
+  public List<String> getAllDistinctBrands() {
+    return productRepository.findAll().stream().map(Product :: getBrand).distinct().toList();
+  }
+
   @Override
   public List<Product> getProductsByBrandAndName(String brand, String name) {
     return productRepository.findByBrandAndName(brand, name);

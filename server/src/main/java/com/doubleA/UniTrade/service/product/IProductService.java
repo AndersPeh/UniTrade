@@ -34,6 +34,9 @@ public interface IProductService {
 
     List<Product> findDistinctProductsByName();
 
+    //To get all distinct brands from products.
+    List<String> getAllDistinctBrands();
+
     List<Product>getProductsByBrandAndName(String brand, String name);
 
     List<ProductDto> getConvertedProducts(List<Product> products);

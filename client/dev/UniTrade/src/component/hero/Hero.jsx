@@ -1,19 +1,12 @@
 import React, {useState} from "react";
 import HeroSlider from "../hero/HeroSlider";
 import SearchBar from "../search/SearchBar";
-import { useDispatch } from "react-redux";
-import { clearFilters,
-    setSearchQuery,
-    setSelectedCategory} from "../../store/features/searchSlice";
+
+// Hero banner component
+// Basically the main banner of the home page
+// It contains the hero slider and search bar component
 
 const Hero = () => {
-    const dispatch = useDispatch();
-
-
-    const handleClearFilters = () => {
-        dispatch(clearFilters());
-    };
-
 
 
     const [currentSlide] = useState(0);
@@ -24,12 +17,7 @@ const Hero = () => {
                 <h1>
                     Welcome to <span className='text-primary'>UniTrade</span>.com
                 </h1>
-                <SearchBar
-                    onChange={(e) => dispatch(setSearchQuery(e.target.value))}
-                    onCategoryChange={(category) =>
-                        dispatch(setSelectedCategory(category))}
-                    onClear={handleClearFilters}
-                />
+                <SearchBar/>
                 <div className='home-button-container'>
                     <a href='#' className='home-shop-button link'>
                         Shop
