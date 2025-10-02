@@ -1,7 +1,10 @@
 import React, {useEffect, useState} from "react";
 import ProductCard from "./ProductCard.jsx";
 import SearchBar from "../search/SearchBar.jsx";
-import {getAllProducts} from "../../store/features/productSlice.js";
+import {
+    getAllProducts,
+    getProductsByCategory,
+} from "../../store/features/productSlice";
 import {useDispatch, useSelector} from "react-redux";
 import Paginator from "../common/Paginator.jsx";
 import {setTotalItems} from "../../store/features/paginationSlice.js";
@@ -33,13 +36,18 @@ const Products = () => {
     // Only automatically runs again when filtering or search query changes
 
     const { name } = useParams();
+    const { categoryId } = useParams();
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
     const initialSearchQuery = queryParams.get("search") || name || "";
 
     useEffect(() => {
-        dispatch(getAllProducts());
-    }, [dispatch]);
+        if (categoryId) {
+            dispatch(getProductsByCategory(categoryId));
+        } else {
+            dispatch(getAllProducts());
+        }
+    }, [dispatch, categoryId]);
 
     useEffect(() => {
         dispatch(setInitialSearchQuery(initialSearchQuery));

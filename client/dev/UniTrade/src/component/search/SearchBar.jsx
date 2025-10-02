@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllCategories } from "../../store/features/categorySlice";
 import {setSearchQuery, setSelectedCategory, clearFilters} from "../../store/features/searchSlice.js";
+import { useNavigate, useParams } from "react-router-dom";
 
 // Search bar component
 // This component will handle the search functionality
@@ -9,11 +10,26 @@ import {setSearchQuery, setSelectedCategory, clearFilters} from "../../store/fea
 // and dispatches actions to update the Redux store
 // It also fetches all categories from the backend to populate the category dropdown
 const SearchBar = () => {
-    const dispatch = useDispatch();
+    const dispatch = useDispatch()
+    const { categoryId } = useParams();
     const categories = useSelector((state) => state.category.categories);
     const { searchQuery, selectedCategory } = useSelector(
         (state) => state.search
     );
+
+    useEffect(() => {
+        if (categoryId && categories.length > 0) {
+            const selectedCategory = categories.find(
+                (category) => category.id === parseInt(categoryId, 10)
+            );
+
+            if (selectedCategory) {
+                dispatch(setSelectedCategory(selectedCategory.name));
+            } else {
+                dispatch(setSelectedCategory("all"));
+            }
+        }
+    }, [categoryId, categories, dispatch]);
 
     const handleCategoryChange = (e) => {
         dispatch(setSelectedCategory(e.target.value));
