@@ -30,6 +30,14 @@ export const getDistinctProductsByName = createAsyncThunk(
     }
 );
 
+export const getProductsByCategory = createAsyncThunk(
+    "product/getProductsByCategory",
+    async (categoryId) => {
+        const response = await api.get(`/products/category/${categoryId}/products`);
+        return response.data.data;
+    }
+);
+
 const initialState = {
     products: [],
     distinctProducts: [],

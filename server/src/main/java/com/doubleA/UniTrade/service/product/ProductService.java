@@ -263,4 +263,9 @@ public class ProductService implements IProductService {
     productDto.setImages(imageDtos);
     return productDto;
   }
+
+    @Override
+    public List<Product> getProductsByCategoryId(Long categoryId) {
+        return productRepository.findAllByCategoryId(categoryId);
+    }
 }
