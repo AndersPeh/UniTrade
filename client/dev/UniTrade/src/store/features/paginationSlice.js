@@ -1,5 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
 
+// This component handle different pagination states
+// like items per page, total items, and current page
+// It also includes reducers to update these states
+// and a reducer to reset the pagination to its initial state
 const initialState = {
     itemsPerPage: 10,
     totalItems: 0,

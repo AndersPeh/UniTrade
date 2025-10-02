@@ -81,6 +81,8 @@ public class ProductController {
     return ResponseEntity.ok(new ApiResponse("Success", convertedProducts));
   }
 
+  //called method in ProductService to get products by brand
+  //This is for sidebar filter in front end
   @GetMapping("/product/by-brand")
   public ResponseEntity<ApiResponse> findProductsByBrand(@RequestParam String brand) {
     List<Product> products = productService.getProductsByBrand(brand);

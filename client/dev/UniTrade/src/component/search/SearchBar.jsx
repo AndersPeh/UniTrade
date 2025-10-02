@@ -4,7 +4,10 @@ import { getAllCategories } from "../../store/features/categorySlice";
 import {setSearchQuery, setSelectedCategory, clearFilters} from "../../store/features/searchSlice.js";
 
 // Search bar component
-
+// This component will handle the search functionality
+// It accepts search query and category selection
+// and dispatches actions to update the Redux store
+// It also fetches all categories from the backend to populate the category dropdown
 const SearchBar = () => {
     const dispatch = useDispatch();
     const categories = useSelector((state) => state.category.categories);
