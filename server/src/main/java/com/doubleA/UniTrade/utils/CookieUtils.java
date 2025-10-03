@@ -29,8 +29,8 @@ public class CookieUtils {
     // Sends cookie over HTTPS connection only if useSecureCookie is true.
     refreshTokenCookie.setSecure(useSecureCookie);
     // mitigates CSRF attacks by controlling when the browser sends the cookie.
-    // Lax means the browser only sends the cookie for my own site or when a user navigates directly
-    // to my site. It won't send the cookie to another site.
+    // Lax means the browser only sends the cookie for UniTrade or when a user navigates directly
+    // to UniTrade site. It won't send the cookie to another site.
     // None means cross-site requests are allowed but it required Secure flag (HTTPS).
     String sameSite = useSecureCookie ? "None" : "Lax";
     setResponseHeader(response, refreshTokenCookie, sameSite);

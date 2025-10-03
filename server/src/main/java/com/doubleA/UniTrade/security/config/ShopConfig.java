@@ -29,66 +29,88 @@ import java.util.List;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class ShopConfig {
-    @Value("${api.prefix}")
-    private static String API;
-    private static final List<String> SECURED_URLS =
-            List.of(API + "/carts/**", API + "/cartItems/**", API + "/orders/**");
-    private final ShopUserDetailsService userDetailsService;
-    private final JwtEntryPoint authEntryPoint;
+  @Value("${api.prefix}")
+  private static String API;
 
-    @Bean
-    public ModelMapper modelMapper() {
-        return new ModelMapper();
-    }
+  // URLs that require users to be authenticated before accessing.
+  private static final List<String> SECURED_URLS =
+      List.of(API + "/carts/**", API + "/cartItems/**", API + "/orders/**");
+  private final ShopUserDetailsService userDetailsService;
+  private final JwtEntryPoint authEntryPoint;
 
-    @Bean
-    public AuthTokenFilter authTokenFilter() {
-        return new AuthTokenFilter();
-    }
+  @Bean
+  public ModelMapper modelMapper() {
+    return new ModelMapper();
+  }
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+  @Bean
+  public AuthTokenFilter authTokenFilter() {
+    return new AuthTokenFilter();
+  }
 
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
-        return authConfig.getAuthenticationManager();
-    }
+  @Bean
+  public PasswordEncoder passwordEncoder() {
+    return new BCryptPasswordEncoder();
+  }
 
-    @Bean
-    public DaoAuthenticationProvider authenticationProvider() {
-        var authProvider = new DaoAuthenticationProvider();
-        authProvider.setUserDetailsService(userDetailsService);
-        authProvider.setPasswordEncoder(passwordEncoder());
-        return authProvider;
-    }
+  @Bean
+  public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig)
+      throws Exception {
+    return authConfig.getAuthenticationManager();
+  }
 
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+  @Bean
+  // Primary authentication mechanism. It finds the user and check the password.
+  public DaoAuthenticationProvider authenticationProvider() {
+    var authProvider = new DaoAuthenticationProvider();
+    authProvider.setUserDetailsService(userDetailsService);
+    authProvider.setPasswordEncoder(passwordEncoder());
+    return authProvider;
+  }
 
-        http.csrf(AbstractHttpConfigurer::disable)
-                .exceptionHandling(exception -> exception.authenticationEntryPoint(authEntryPoint))
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth -> auth.requestMatchers(SECURED_URLS.toArray(String[]::new)).authenticated()
-                        .anyRequest().permitAll());
-        http.authenticationProvider(authenticationProvider());
-        http.addFilterBefore(authTokenFilter(), UsernamePasswordAuthenticationFilter.class);
-        return http.build();
+  @Bean
+  // It defines UniTrade's security rules.
+  public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    // Disable CSRF protection because UniTrade is configured to be stateless
+    // (SessionCreationPolicy.STATELESS),
+    // so the authentication is handled by a JWT sent with each request. As CSRF protection works by
+    // using CSRF token stored in the HTTP session, stateless removes session so no need CSRF
+    // protection.
+    http.csrf(AbstractHttpConfigurer::disable)
+        // set JwtEntryPoint to handle exception of authentication failures.
+        .exceptionHandling(exception -> exception.authenticationEntryPoint(authEntryPoint))
+        // Configures the session policy to stateless so each request must be independently
+        // authenticated. By setting session as stateless, the server doesnt store user's session.
+        .sessionManagement(
+            session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+        // requires authentication for SECURED_URLS and allows other URLs to be accessed by public.
+        .authorizeHttpRequests(
+            auth ->
+                auth.requestMatchers(SECURED_URLS.toArray(String[]::new))
+                    .authenticated()
+                    .anyRequest()
+                    .permitAll());
+    // tell the Authentication Manager to use DaoAuthenticationProvider for authenticating users.
+    http.authenticationProvider(authenticationProvider());
+    // inserts authTokenFilter to run it before the default authentication filter.
+    // so Spring Security knows the authorisation of the user to allow/ deny access.
+    http.addFilterBefore(authTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+    return http.build();
+  }
 
-    }
-
-    @Bean
-    public WebMvcConfigurer corsConfigurer() {
-        return new WebMvcConfigurer() {
-            @Override
-            public void addCorsMappings(@NonNull CorsRegistry registry) {
-                registry.addMapping("/**") // Apply to all endpoints
-                        .allowedOrigins("http://localhost:5180") // Allow this origin
-                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // Allow these HTTP methods
-                        .allowedHeaders("*") // Allow all headers
-                        .allowCredentials(true); // Allow credentials
-            }
-        };
-    }
+  @Bean
+  // allows Frontend to make API calls to the backend.
+  public WebMvcConfigurer corsConfigurer() {
+    return new WebMvcConfigurer() {
+      @Override
+      public void addCorsMappings(@NonNull CorsRegistry registry) {
+        registry
+            .addMapping("/**") // Apply to all endpoints
+            .allowedOrigins("http://localhost:5180") // Allow this origin
+            .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // Allow these HTTP methods
+            .allowedHeaders("*") // Allow all headers
+            .allowCredentials(true); // Allow credentials
+      }
+    };
+  }
 }
