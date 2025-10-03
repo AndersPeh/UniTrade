@@ -1,11 +1,13 @@
 package com.doubleA.UniTrade.service.cart;
 
+import com.doubleA.UniTrade.dtos.CartDto;
 import com.doubleA.UniTrade.model.Cart;
 import com.doubleA.UniTrade.model.User;
 import com.doubleA.UniTrade.repository.CartItemRepository;
 import com.doubleA.UniTrade.repository.CartRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -16,17 +18,17 @@ import java.util.Optional;
 public class CartService implements ICartService {
   private final CartRepository cartRepository;
   private final CartItemRepository cartItemRepository;
+  private final ModelMapper mapper;
 
-  @Override
-  public Cart getCart(Long cartId) {
-    return cartRepository
-        .findById(cartId)
-        .orElseThrow(() -> new EntityNotFoundException("Cart Not Found"));
 
-    //    BigDecimal totalAmount = cart.getTotalAmount();
-    //    cart.setTotalAmount(totalAmount);
-    //    return cartRepository.save(cart);
-  }
+   @Override
+   public Cart getCart(Long cartId) {
+       Cart cart = cartRepository.findById(cartId)
+               .orElseThrow(() -> new EntityNotFoundException("Cart not found!"));
+       BigDecimal totalAmount = cart.getTotalAmount();
+       cart.setTotalAmount(totalAmount);
+       return cartRepository.save(cart);
+   }
 
   @Override
   public Cart getCartByUserId(Long userId) {
@@ -60,4 +62,9 @@ public class CartService implements ICartService {
     Cart cart = getCart(cartId);
     return cart.getTotalAmount();
   }
+
+    @Override
+    public CartDto convertToDto(Cart cart){
+        return mapper.map(cart, CartDto.class);
+    }
 }
