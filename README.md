@@ -30,7 +30,6 @@ The platform is built as a full stack, decoupled application. The backend is a s
 | **Payment Gateway**       | [**Stripe**](https://stripe.com/)                                                                           | Handles secure, PCI compliant credit card transactions.                |
 | **AI & Vector Search**    | [**Spring AI**](https://github.com/spring-projects/spring-ai) & [**Chroma DB**](https://www.trychroma.com/) | Generates vector embeddings from images for our visual search feature. |
 | **Security**              | [**Spring Security**](https://spring.io/projects/spring-security) with JWT                                  | Secures the entire application, protecting user data and endpoints.    |
-| **Deployment**            | **AWS**                                                                                                     | The entire application will be deployed to a cloud environment on AWS. |
 
 ### Architecture
 
