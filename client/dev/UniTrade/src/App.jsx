@@ -3,6 +3,7 @@ import {Route, RouterProvider, createBrowserRouter, createRoutesFromElements} fr
 import RootLayout from "./component/layout/RootLayout.jsx";
 import Home from "./component/home/Home.jsx";
 import Products from "./component/product/Products.jsx";
+import ProductDetails from "./component/product/ProductDetails";
 
 // Overall structure of main page
 // Uses React Router for routing
@@ -20,6 +21,10 @@ function App() {
               <Route
                   path='/products/category/:categoryId/products/'
                   element={<Products />}
+              />
+              <Route
+                  path='/product/:productId/details'
+                  element={<ProductDetails />}
               />
           </Route>
       )

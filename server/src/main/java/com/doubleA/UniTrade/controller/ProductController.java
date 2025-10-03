@@ -97,6 +97,7 @@ public class ProductController {
     return ResponseEntity.ok(new ApiResponse("Success", convertedProducts));
   }
 
+  //This is for category section in footer
     @GetMapping("/category/{categoryId}/products")
     public ResponseEntity<ApiResponse> findProductsByCategoryId(@PathVariable Long categoryId) {
         List<Product> products = productService.getProductsByCategoryId(categoryId);

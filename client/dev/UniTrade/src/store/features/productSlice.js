@@ -30,6 +30,20 @@ export const getDistinctProductsByName = createAsyncThunk(
     }
 );
 
+// Fetch all distinct products by ID from the backend
+// This will be used for displaying product details
+// when a user clicks on a product in product listing page
+export const getProductById = createAsyncThunk(
+    "product/getProductById",
+    async (productId) => {
+        const response = await api.get(`/products/product/${productId}/product`);
+        return response.data.data;
+    }
+);
+
+// Fetch products by category ID from the backend
+// This will be used for filtering products based on category
+// When a user selects a category from footer
 export const getProductsByCategory = createAsyncThunk(
     "product/getProductsByCategory",
     async (categoryId) => {
@@ -40,9 +54,11 @@ export const getProductsByCategory = createAsyncThunk(
 
 const initialState = {
     products: [],
+    product: null,
     distinctProducts: [],
     brands: [],
     selectedBrands: [],
+    quantity: 1,
     errorMessage: null,
     isLoading: true,
 };
@@ -63,6 +79,14 @@ const productSlice = createSlice({
                 state.selectedBrands = state.selectedBrands.filter((b) => b !== brand);
             }
         },
+        decreaseQuantity: (state) => {
+            if (state.quantity > 1) {
+                state.quantity--;
+            }
+        },
+        increaseQuantity: (state) => {
+            state.quantity++;
+        },
     },
 
     extraReducers: (builder) => {
@@ -82,9 +106,18 @@ const productSlice = createSlice({
             .addCase(getDistinctProductsByName.fulfilled, (state, action) => {
                 state.distinctProducts = action.payload;
                 state.isLoading = false;
+            })
+            .addCase(getProductById.fulfilled, (state, action) => {
+                state.product = action.payload;
+                state.isLoading = false;
+            })
+            .addCase(getProductsByCategory.fulfilled, (state, action) => {
+                state.products = action.payload;
+                state.errorMessage = null;
+                state.isLoading = false;
             });
     },
 });
 
-export const { filterByBrands } = productSlice.actions;
+export const { filterByBrands, decreaseQuantity, increaseQuantity  } = productSlice.actions;
 export default productSlice.reducer;
