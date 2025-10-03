@@ -264,6 +264,7 @@ public class ProductService implements IProductService {
     return productDto;
   }
 
+  // gets products by category ID using the product repository's findAllByCategoryId method.
     @Override
     public List<Product> getProductsByCategoryId(Long categoryId) {
         return productRepository.findAllByCategoryId(categoryId);
