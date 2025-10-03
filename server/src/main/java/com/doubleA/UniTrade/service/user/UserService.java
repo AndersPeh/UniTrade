@@ -2,6 +2,7 @@ package com.doubleA.UniTrade.service.user;
 
 import com.doubleA.UniTrade.dtos.UserDto;
 import com.doubleA.UniTrade.model.User;
+import com.doubleA.UniTrade.repository.AddressRepository;
 import com.doubleA.UniTrade.repository.UserRepository;
 import com.doubleA.UniTrade.request.CreateUserRequest;
 import com.doubleA.UniTrade.request.UpdateUserRequest;
@@ -11,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -22,6 +24,8 @@ import java.util.Optional;
 public class UserService implements IUserService {
   private final UserRepository userRepository;
   private final ModelMapper modelMapper;
+  private final PasswordEncoder passwordEncoder;
+  private final AddressRepository addressRepository;
 
   @Override
   public User createUser(CreateUserRequest request) {
@@ -33,8 +37,19 @@ public class UserService implements IUserService {
               newUser.setFirstName(request.getFirstName());
               newUser.setLastName(request.getLastName());
               newUser.setEmail(request.getEmail());
-              newUser.setPassword(request.getPassword());
-              return userRepository.save(newUser);
+              newUser.setPassword(passwordEncoder.encode(request.getPassword()));
+              User savedUser = userRepository.save(newUser);
+
+              Optional.ofNullable(request.getAddressList())
+                  .ifPresent(
+                      addressList -> {
+                        addressList.forEach(
+                            address -> {
+                              address.setUser(savedUser);
+                              addressRepository.save(address);
+                            });
+                      });
+              return savedUser;
             })
         .orElseThrow(() -> new EntityExistsException(request.getEmail() + "already exists."));
   }
@@ -74,5 +89,14 @@ public class UserService implements IUserService {
   public UserDto convertToDto(User user) {
 
     return modelMapper.map(user, UserDto.class);
+  }
+
+  // Block unauthenticated user from accessing.
+  @Override
+  public User getAuthenticatedUser() {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    String email = authentication.getName();
+    return Optional.ofNullable(userRepository.findByEmail(email))
+        .orElseThrow(() -> new EntityNotFoundException("Please login first."));
   }
 }
