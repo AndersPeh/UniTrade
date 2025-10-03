@@ -18,15 +18,13 @@ public class CartItemController {
   private final IUserService userService;
   private final ICartService cartService;
 
-  @PostMapping("/item/add")
-  public ResponseEntity<ApiResponse> addItemToCart(
-      @RequestParam Long productId, @RequestParam int quantity) {
-    User user = userService.getAuthenticatedUser();
-    Cart userCart = cartService.initialiseNewCartForUser(user);
-    cartItemService.addItemToCart(userCart.getId(), productId, quantity);
-
-    return ResponseEntity.ok(new ApiResponse("Add Item Success", null));
-  }
+   @PostMapping("/item/add")
+   public ResponseEntity<ApiResponse> addItemToCart( @RequestParam Long productId,  @RequestParam int quantity) {
+       // User user = userService.getAuthenticatedUser();
+       // Cart cart = cartService.initializeNewCartForUser(user);
+       cartItemService.addItemToCart(2L, productId, quantity);
+       return ResponseEntity.ok(new ApiResponse("Item added successfully!", null));
+   }
 
   @DeleteMapping("/cart/{cartId}/item/{itemId}/remove")
   public ResponseEntity<ApiResponse> removeItemFromCart(

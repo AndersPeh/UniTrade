@@ -1,5 +1,6 @@
 package com.doubleA.UniTrade.service.cart;
 
+import com.doubleA.UniTrade.dtos.CartDto;
 import com.doubleA.UniTrade.model.Cart;
 import com.doubleA.UniTrade.model.User;
 
@@ -15,4 +16,6 @@ public interface ICartService {
   Cart initialiseNewCartForUser(User user);
 
   BigDecimal getTotalPrice(Long cartId);
+
+  CartDto convertToDto(Cart cart);
 }
