@@ -2,6 +2,7 @@ package com.doubleA.UniTrade.service.user;
 
 import com.doubleA.UniTrade.dtos.UserDto;
 import com.doubleA.UniTrade.model.User;
+import com.doubleA.UniTrade.repository.AddressRepository;
 import com.doubleA.UniTrade.repository.UserRepository;
 import com.doubleA.UniTrade.request.CreateUserRequest;
 import com.doubleA.UniTrade.request.UpdateUserRequest;
@@ -24,6 +25,7 @@ public class UserService implements IUserService {
   private final UserRepository userRepository;
   private final ModelMapper modelMapper;
   private final PasswordEncoder passwordEncoder;
+  private final AddressRepository addressRepository;
 
   @Override
   public User createUser(CreateUserRequest request) {
@@ -36,7 +38,18 @@ public class UserService implements IUserService {
               newUser.setLastName(request.getLastName());
               newUser.setEmail(request.getEmail());
               newUser.setPassword(passwordEncoder.encode(request.getPassword()));
-              return userRepository.save(newUser);
+              User savedUser = userRepository.save(newUser);
+
+              Optional.ofNullable(request.getAddressList())
+                  .ifPresent(
+                      addressList -> {
+                        addressList.forEach(
+                            address -> {
+                              address.setUser(savedUser);
+                              addressRepository.save(address);
+                            });
+                      });
+              return savedUser;
             })
         .orElseThrow(() -> new EntityExistsException(request.getEmail() + "already exists."));
   }
