@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -22,6 +23,7 @@ import java.util.Optional;
 public class UserService implements IUserService {
   private final UserRepository userRepository;
   private final ModelMapper modelMapper;
+  private final PasswordEncoder passwordEncoder;
 
   @Override
   public User createUser(CreateUserRequest request) {
@@ -33,7 +35,7 @@ public class UserService implements IUserService {
               newUser.setFirstName(request.getFirstName());
               newUser.setLastName(request.getLastName());
               newUser.setEmail(request.getEmail());
-              newUser.setPassword(request.getPassword());
+              newUser.setPassword(passwordEncoder.encode(request.getPassword()));
               return userRepository.save(newUser);
             })
         .orElseThrow(() -> new EntityExistsException(request.getEmail() + "already exists."));
@@ -74,5 +76,14 @@ public class UserService implements IUserService {
   public UserDto convertToDto(User user) {
 
     return modelMapper.map(user, UserDto.class);
+  }
+
+  // Block unauthenticated user from accessing.
+  @Override
+  public User getAuthenticatedUser() {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    String email = authentication.getName();
+    return Optional.ofNullable(userRepository.findByEmail(email))
+        .orElseThrow(() -> new EntityNotFoundException("Please login first."));
   }
 }
