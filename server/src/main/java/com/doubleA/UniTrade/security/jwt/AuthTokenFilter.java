@@ -52,11 +52,15 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     filterChain.doFilter(request, response);
   }
 
+  // Because Global Exception Handler only listens to exceptions from controllers, exceptions from
+  // authentication are not handled.
+  // Authentication exceptions occur before reaching controllers, so need to send to the client
+  // directly from here.
   private void sendErrorResponse(HttpServletResponse response) throws IOException {
     response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
     response.setContentType("application/json");
     ErrorResponse errorResponse =
-        new ErrorResponse("Invalid access token, please long and try again!");
+        new ErrorResponse("Invalid access token, please login and try again.");
     ObjectMapper objectMapper = new ObjectMapper();
     String jsonResponse = objectMapper.writeValueAsString(errorResponse);
     response.getWriter().write(jsonResponse);
