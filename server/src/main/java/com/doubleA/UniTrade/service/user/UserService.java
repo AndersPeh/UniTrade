@@ -1,8 +1,10 @@
 package com.doubleA.UniTrade.service.user;
 
 import com.doubleA.UniTrade.dtos.UserDto;
+import com.doubleA.UniTrade.model.Role;
 import com.doubleA.UniTrade.model.User;
 import com.doubleA.UniTrade.repository.AddressRepository;
+import com.doubleA.UniTrade.repository.RoleRepository;
 import com.doubleA.UniTrade.repository.UserRepository;
 import com.doubleA.UniTrade.request.CreateUserRequest;
 import com.doubleA.UniTrade.request.UpdateUserRequest;
@@ -16,6 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.Set;
 
 // To be used as implementation class of IUserService.
 @Service
@@ -26,9 +29,14 @@ public class UserService implements IUserService {
   private final ModelMapper modelMapper;
   private final PasswordEncoder passwordEncoder;
   private final AddressRepository addressRepository;
+  private final RoleRepository roleRepository;
 
   @Override
   public User createUser(CreateUserRequest request) {
+    Role userRole =
+        Optional.ofNullable(roleRepository.findByName("ROLE_USER"))
+            .orElseThrow(() -> new EntityNotFoundException("Role Not Found"));
+
     return Optional.of(request)
         .filter(createUserRequest -> !userRepository.existsByEmail(request.getEmail()))
         .map(
@@ -38,6 +46,7 @@ public class UserService implements IUserService {
               newUser.setLastName(request.getLastName());
               newUser.setEmail(request.getEmail());
               newUser.setPassword(passwordEncoder.encode(request.getPassword()));
+              newUser.setRoles(Set.of(userRole));
               User savedUser = userRepository.save(newUser);
 
               Optional.ofNullable(request.getAddressList())
