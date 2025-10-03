@@ -9,6 +9,8 @@ import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -74,5 +76,14 @@ public class UserService implements IUserService {
   public UserDto convertToDto(User user) {
 
     return modelMapper.map(user, UserDto.class);
+  }
+
+  // Block unauthenticated user from accessing.
+  @Override
+  public User getAuthenticatedUser() {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    String email = authentication.getName();
+    return Optional.ofNullable(userRepository.findByEmail(email))
+        .orElseThrow(() -> new EntityNotFoundException("Please login first."));
   }
 }
