@@ -94,6 +94,7 @@ public class OrderService implements IOrderService {
     long amountInSmallestUnit = Math.round(request.getAmount() * 100);
 
     // Sets amount, currency and payment method to build payment intent and send to Stripe.
+    // Stripe.apiKey is automatically provided by StripeUtil to create PaymentIntent.
     PaymentIntent intent =
         PaymentIntent.create(
             PaymentIntentCreateParams.builder()
