@@ -2,13 +2,16 @@ package com.doubleA.UniTrade.controller;
 
 import com.doubleA.UniTrade.dtos.OrderDto;
 import com.doubleA.UniTrade.model.Order;
+import com.doubleA.UniTrade.request.PaymentRequest;
 import com.doubleA.UniTrade.response.ApiResponse;
 import com.doubleA.UniTrade.service.order.IOrderService;
+import com.stripe.exception.StripeException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -28,5 +31,16 @@ public class OrderController {
     List<OrderDto> orders = orderService.getUserOrders(userId);
 
     return ResponseEntity.ok(new ApiResponse("Success", orders));
+  }
+
+  @PostMapping("/create-payment-intent")
+  public ResponseEntity<?> createPaymentIntent(@RequestBody PaymentRequest request)
+      throws StripeException {
+
+    // Send clientSecret to the frontend for the customer to make payment without exposing
+    // UniTrade's Stripe API key.
+    String clientSecret = orderService.createPaymentIntent(request);
+
+    return ResponseEntity.ok(Map.of("clientSecret", clientSecret));
   }
 }
