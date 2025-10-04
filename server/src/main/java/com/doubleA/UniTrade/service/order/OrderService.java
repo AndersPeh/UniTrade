@@ -8,7 +8,11 @@ import com.doubleA.UniTrade.model.OrderItem;
 import com.doubleA.UniTrade.model.Product;
 import com.doubleA.UniTrade.repository.OrderRepository;
 import com.doubleA.UniTrade.repository.ProductRepository;
+import com.doubleA.UniTrade.request.PaymentRequest;
 import com.doubleA.UniTrade.service.cart.ICartService;
+import com.stripe.exception.StripeException;
+import com.stripe.model.PaymentIntent;
+import com.stripe.param.PaymentIntentCreateParams;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -81,6 +85,27 @@ public class OrderService implements IOrderService {
     List<Order> orders = orderRepository.findByUserId(userId);
 
     return orders.stream().map(this::convertToDto).toList();
+  }
+
+  @Override
+  public String createPaymentIntent(PaymentRequest request) throws StripeException {
+    // Stripe only accepts smallest denomination of every currency. For AUD, cent is the smallest,
+    // so need to convert the amount from the frontend to cent by multiplying 100.
+    long amountInSmallestUnit = Math.round(request.getAmount() * 100);
+
+    // Sets amount, currency and payment method to build payment intent and send to Stripe.
+    PaymentIntent intent =
+        PaymentIntent.create(
+            PaymentIntentCreateParams.builder()
+                .setAmount(amountInSmallestUnit)
+                .setCurrency(request.getCurrency())
+                .addPaymentMethodType("card")
+                .build());
+
+    // After creating PaymentIntent, generate getClientSecret to send to the client so customers can
+    // make
+    // payment without exposing UniTrade API key.
+    return intent.getClientSecret();
   }
 
   @Override
