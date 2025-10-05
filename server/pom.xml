@@ -32,7 +32,22 @@
         <jjwt-api.version>0.12.7</jjwt-api.version>
         <jjwt-impl.version>0.12.7</jjwt-impl.version>
         <jjwt-jackson.version>0.12.7</jjwt-jackson.version>
+        <spring-ai.version>1.1.0-M1</spring-ai.version>
+
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.ai</groupId>
+                <artifactId>spring-ai-bom</artifactId>
+                <version>${spring-ai.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -91,6 +106,14 @@
             <groupId>com.stripe</groupId>
             <artifactId>stripe-java</artifactId>
             <version>30.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-starter-model-openai</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-starter-vector-store-chroma</artifactId>
         </dependency>
 
     </dependencies>

@@ -4,17 +4,16 @@ import com.doubleA.UniTrade.dtos.ImageDto;
 import com.doubleA.UniTrade.model.Image;
 import com.doubleA.UniTrade.response.ApiResponse;
 import com.doubleA.UniTrade.service.image.IImageService;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -48,8 +47,9 @@ public class ImageController {
 
   @PutMapping("/image/{imageId}/update")
   public ResponseEntity<ApiResponse> updateImage(
-      @PathVariable Long imageId, @RequestBody MultipartFile file) {
-    imageService.updateImage(file, imageId);
+      @PathVariable Long imageId, @RequestBody MultipartFile file, @RequestParam Long productId)
+      throws IOException {
+    imageService.updateImage(file, imageId, productId);
     return ResponseEntity.ok(new ApiResponse("Image Update Success", null));
   }
 
