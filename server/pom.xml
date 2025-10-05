@@ -32,7 +32,7 @@
         <jjwt-api.version>0.12.7</jjwt-api.version>
         <jjwt-impl.version>0.12.7</jjwt-impl.version>
         <jjwt-jackson.version>0.12.7</jjwt-jackson.version>
-        <spring-ai.version>1.0.3</spring-ai.version>
+        <spring-ai.version>1.1.0-M1</spring-ai.version>
 
     </properties>
 
