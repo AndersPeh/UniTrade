@@ -12,6 +12,7 @@ import { useNavigate, useParams } from "react-router-dom";
 const SearchBar = () => {
     const dispatch = useDispatch()
     const { categoryId } = useParams();
+    const navigate = useNavigate();
     const categories = useSelector((state) => state.category.categories);
     const { searchQuery, selectedCategory } = useSelector(
         (state) => state.search
@@ -37,6 +38,7 @@ const SearchBar = () => {
 
     const handleClearFilters = () => {
         dispatch(clearFilters());
+        // navigate("/products");
         }
     const handleSearchQueryChange = (e) => {
         dispatch(setSearchQuery(e.target.value));

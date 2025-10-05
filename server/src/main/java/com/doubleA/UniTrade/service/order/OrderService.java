@@ -16,6 +16,7 @@ import com.stripe.param.PaymentIntentCreateParams;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -30,6 +31,7 @@ public class OrderService implements IOrderService {
   private final ICartService cartService;
   private final ModelMapper modelMapper;
 
+  @Transactional
   @Override
   public Order placeOrder(Long userId) {
     // When user places an order, get the cart of the user.

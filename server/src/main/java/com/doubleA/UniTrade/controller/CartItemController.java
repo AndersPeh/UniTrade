@@ -1,5 +1,7 @@
 package com.doubleA.UniTrade.controller;
 
+import com.doubleA.UniTrade.dtos.CartItemDto;
+import com.doubleA.UniTrade.model.CartItem;
 import com.doubleA.UniTrade.model.Cart;
 import com.doubleA.UniTrade.model.User;
 import com.doubleA.UniTrade.response.ApiResponse;
@@ -20,10 +22,11 @@ public class CartItemController {
 
    @PostMapping("/item/add")
    public ResponseEntity<ApiResponse> addItemToCart( @RequestParam Long productId,  @RequestParam int quantity) {
-       // User user = userService.getAuthenticatedUser();
-       // Cart cart = cartService.initializeNewCartForUser(user);
-       cartItemService.addItemToCart(2L, productId, quantity);
-       return ResponseEntity.ok(new ApiResponse("Item added successfully!", null));
+       User user = userService.getAuthenticatedUser();
+       Cart cart = cartService.initialiseNewCartForUser(user);
+       CartItem cartItem = cartItemService.addItemToCart(cart.getId(), productId, quantity);
+       CartItemDto cartItemDto = cartItemService.convertToDto(cartItem);
+       return ResponseEntity.ok(new ApiResponse("Item added successfully!", cartItemDto));
    }
 
   @DeleteMapping("/cart/{cartId}/item/{itemId}/remove")

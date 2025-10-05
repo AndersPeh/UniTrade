@@ -22,8 +22,8 @@ const Footer = () => {
             <div className='footer-section'>
                 <h3>Category</h3>
                 <ul>
-                    {categories.map((category) => (
-                        <li key={category.id}>
+                    {categories.map((category, index) => (
+                        <li key={index}>
                             <Link to={`/products/category/${category.id}/products`}>{category.name}</Link>
                         </li>
                     ))}
@@ -36,6 +36,7 @@ const Footer = () => {
             </div>
             <div className='footer-section'>
                 <h3>Follow Us</h3>
+                <div className='social-icons'>
                 <a
                     href='https://facebook.com'
                     target='_blank'
@@ -54,6 +55,7 @@ const Footer = () => {
                     rel='noopener noreferrer'>
                     <FaInstagram />
                 </a>
+                </div>
             </div>
             <div className='footer-bottom'>
                 <p>&copy; 2025 unitrade.com. All rights reserved.</p>

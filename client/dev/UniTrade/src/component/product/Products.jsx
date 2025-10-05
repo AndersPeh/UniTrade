@@ -12,6 +12,7 @@ import SideBar from "../common/SideBar.jsx";
 import { setInitialSearchQuery } from "../../store/features/searchSlice";
 import { useLocation, useParams } from "react-router-dom";
 import LoadSpinner from "../common/LoadSpinner";
+import { ToastContainer } from "react-toastify";
 
 // Product Page
 // This page will contain the search bar and sidebar
@@ -101,6 +102,7 @@ const Products = () => {
 
     return (
         <>
+        <ToastContainer />
         <div className="d-flex justify-content-center">
             <div className="col-md-6 mt-2">
               <div className='search-bar-input-group'>

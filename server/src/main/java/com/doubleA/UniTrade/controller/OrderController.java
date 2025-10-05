@@ -19,7 +19,7 @@ import java.util.Map;
 public class OrderController {
   private final IOrderService orderService;
 
-  @PostMapping("/user/order")
+  @PostMapping("/user/{userId}/place-order")
   public ResponseEntity<ApiResponse> placeOrder(@RequestParam Long userId) {
     Order order = orderService.placeOrder(userId);
     OrderDto orderDto = orderService.convertToDto(order);

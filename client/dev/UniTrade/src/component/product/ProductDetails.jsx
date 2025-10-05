@@ -1,10 +1,13 @@
 import React, { useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { getProductById } from "../../store/features/productSlice";
+import { getProductById, setQuantity } from "../../store/features/productSlice";
 import { useSelector, useDispatch } from "react-redux";
 import ImageZoomify from "../common/ImageZoomify";
 import QuantityUpdater from "../utils/QuantityUpdater";
 import { FaShoppingCart } from "react-icons/fa";
+import { addToCart } from "../../store/features/cartSlice";
+import { toast, ToastContainer } from "react-toastify";
+import StockStatus from "../utils/StockStatus";
 
 
 // Product Details Page
@@ -15,14 +18,44 @@ import { FaShoppingCart } from "react-icons/fa";
 const ProductDetails = () => {
     const { productId } = useParams();
     const dispatch = useDispatch();
-    const product = useSelector((state) => state.product.product);
+    const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+    const { product, quantity } = useSelector((state) => state.product);
+    const successMessage = useSelector((state) => state.cart.successMessage);
+    const errorMessage = useSelector((state) => state.cart.errorMessage);
+    const productOutOfStock = product?.inventory <= 0;
 
     useEffect(() => {
         dispatch(getProductById(productId));
     }, [dispatch, productId]);
 
+    // Main handler for adding product to cart
+    // It triggers addToCart async, while also gives variable it needs
+    // For addToCart to do POST request
+    const handleAddToCart = async () => {
+        if (!isAuthenticated) {
+            toast.error("You need to log in to add items to the cart.");
+            return;
+        }
+        try {
+            await dispatch(addToCart({ productId, quantity })).unwrap();
+            toast.success(successMessage);
+        } catch (error) {
+            toast.error(errorMessage);
+        }
+    };
+
+    // logic to increase/decrease product quantity
+    const handleIncreaseQuantity = () => {
+        dispatch(setQuantity(quantity + 1));
+    };
+
+    const handleDecreaseQuantity = () => {
+        dispatch(setQuantity(quantity - 1, 1));
+    };
+
     return (
-        <div className='container'>
+        <div className='container mt-4 mb-4'>
+            <ToastContainer />
             {product ? (
                 <div className='row product-details'>
                     <div className='col-md-2'>
@@ -40,24 +73,27 @@ const ProductDetails = () => {
                         <p className='product-name'>
                             Rating: <span className='rating'>some stars</span>
                         </p>
-                        <p>
-                            {" "}
-                            {product.inventory > 0 ? (
-                                <span className='text-success'>
-                  {product.inventory} in stock
-                </span>
-                            ) : (
-                                <span className='text-danger'>Out of stock</span>
-                            )}
-                        </p>
+
+                        <StockStatus inventory={product.inventory} />
+
                         <p>Quantity:</p>
-                        <QuantityUpdater />
+                        <QuantityUpdater
+                            quantity={quantity}
+                            onDecrease={handleDecreaseQuantity}
+                            onIncrease={handleIncreaseQuantity}
+                            disabled={productOutOfStock}
+                        />
                         <div className='d-flex gap-2 mt-3'>
-                            <button className='add-to-cart-button'>
+                            <button
+                                className='add-to-cart-button'
+                                onClick={handleAddToCart}
+                                disabled={productOutOfStock}>
                                 {" "}
                                 <FaShoppingCart /> Add to cart
                             </button>
-                            <button className='buy-now-button'>Buy now</button>
+                            <button className='buy-now-button' disabled={productOutOfStock}>
+                                Buy now
+                            </button>
                         </div>
                     </div>
                 </div>
