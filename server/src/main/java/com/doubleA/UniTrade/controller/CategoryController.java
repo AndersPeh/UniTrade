@@ -32,13 +32,13 @@ public class CategoryController {
     return ResponseEntity.ok(new ApiResponse("Add Category Success", theCategory));
   }
 
-  @GetMapping("/category/{id}/category")
+  @GetMapping("/category/id/{id}")
   public ResponseEntity<ApiResponse> getCategoryById(@PathVariable Long id) {
     Category theCategory = categoryService.findCategoryById(id);
     return ResponseEntity.ok(new ApiResponse("Success", theCategory));
   }
 
-  @GetMapping("/category/{name}/category")
+  @GetMapping("/category/name/{name}")
   public ResponseEntity<ApiResponse> getCategoryByName(@PathVariable String name) {
     Category theCategory = categoryService.findCategoryByName(name);
     return ResponseEntity.ok(new ApiResponse("Success", theCategory));

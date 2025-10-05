@@ -4,68 +4,51 @@ import com.doubleA.UniTrade.model.Product;
 import com.doubleA.UniTrade.request.AddProductRequest;
 import com.doubleA.UniTrade.request.ProductUpdateRequest;
 import com.doubleA.UniTrade.dtos.ProductDto;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
 // Interface is for defining contract (like a rule) for product-related operations.
-// When it is injected later on, any class dependent it will have access to the logic defined in ProductService.
+// When it is injected later on, any class dependent it will have access to the logic defined in
+// ProductService.
 public interface IProductService {
 
-// need to specify what these methods take as parameters and return for implementing class (ProductService)
-// to know what to expect.
-// addProduct, updateProduct and getProductById return Product object.
-    Product addProduct(AddProductRequest request);
-    Product updateProduct(ProductUpdateRequest product, Long productId);
-    Product getProductById(Long productId);
+  // need to specify what these methods take as parameters and return for implementing class
+  // (ProductService)
+  // to know what to expect.
+  // addProduct, updateProduct and getProductById return Product object.
+  Product addProduct(AddProductRequest request);
 
-// deleteProductById has nothing to return.
-    void deleteProductById(Long productId);
+  Product updateProduct(ProductUpdateRequest product, Long productId);
 
-// return List of Product when we get all products.
-    List<Product> getAllProducts();
+  Product getProductById(Long productId);
 
-    List<Product>getProductsByCategory(String category);
+  // deleteProductById has nothing to return.
+  void deleteProductById(Long productId);
 
-    List<Product>getProductsByBrand(String brand);
+  // return List of Product when we get all products.
+  List<Product> getAllProducts();
 
-    List<Product> getProductsByCategoryAndBrand(String category, String brand);
+  List<Product> getProductsByCategory(String category);
 
-    List<Product>getProductsByName(String name);
+  List<Product> getProductsByBrand(String brand);
 
-    List<Product> findDistinctProductsByName();
+  List<Product> getProductsByCategoryAndBrand(String category, String brand);
 
-    //To get all distinct brands from products.
-    List<String> getAllDistinctBrands();
+  List<Product> getProductsByName(String name);
 
-    List<Product>getProductsByBrandAndName(String brand, String name);
+  List<Product> findDistinctProductsByName();
 
-    List<ProductDto> getConvertedProducts(List<Product> products);
+  // To get all distinct brands from products.
+  List<String> getAllDistinctBrands();
 
-    ProductDto convertToDto(Product product);
+  List<Product> getProductsByBrandAndName(String brand, String name);
 
-    List<Product> getProductsByCategoryId(Long categoryId);
+  List<ProductDto> getConvertedProducts(List<Product> products);
+
+  ProductDto convertToDto(Product product);
+
+  List<Product> getProductsByCategoryId(Long categoryId);
+
+  List<Product> searchProductsByImage(MultipartFile image);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
