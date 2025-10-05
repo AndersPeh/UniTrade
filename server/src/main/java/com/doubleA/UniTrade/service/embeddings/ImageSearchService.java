@@ -69,12 +69,12 @@ public class ImageSearchService {
           SearchRequest.builder()
               // search query is the image description text.
               .query(imageDescription)
-              // top 10 most similar result after converting the query text to vector embedding.
+              // top X most similar result after converting the query text to vector embedding.
               .topK(5)
               // Only want result above 85% similarity.
               .similarityThreshold(0.85f)
               .build();
-      // the Chroma vector store finds top 10 vector embeddings which are most similar to
+      // the Chroma vector store finds top X vector embeddings which are most similar to
       // the vector embedding of the image description text provided.
       List<Document> searchResult = vectorStore.doSimilaritySearch(searchRequest);
       log.info("Search result: {}", searchResult);
