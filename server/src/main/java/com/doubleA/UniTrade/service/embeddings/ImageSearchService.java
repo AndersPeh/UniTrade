@@ -46,10 +46,10 @@ public class ImageSearchService {
       // sends the document to the Chroma vector store, then vector store will take the text from
       // the document (image description), uses a configured embedding model to convert it into a
       // numerical vector.
-      // Then vector store will save that vector and its associated metadata into the ChromaDB
-      // collection.
+      // Then vector store will save that vector embedding (numerical vector of image description
+      // text), image description text and its associated metadata into the ChromaDB collection.
       vectorStore.doAdd(List.of(doc));
-      //
+      // return image id of embedding.
       return List.of(imageId.toString());
     } catch (IOException e) {
       throw new RuntimeException("Failed to process image for embeddings.", e);
@@ -72,8 +72,8 @@ public class ImageSearchService {
               // Only want result above 85% similarity.
               .similarityThreshold(0.85f)
               .build();
-      // the Chroma vector store finds top 10 documents whose vector embeddings are most similar to
-      // the vector of the image description text provided.
+      // the Chroma vector store finds top 10 vector embeddings which are most similar to
+      // the vector embedding of the image description text provided.
       List<Document> searchResult = vectorStore.doSimilaritySearch(searchRequest);
       log.info("Search result: {}", searchResult);
 
