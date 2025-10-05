@@ -84,8 +84,8 @@ public class ImageService implements IImageService {
               .build();
       chromaService.deleteEmbeddingsByCollectionId(deleteEmbeddings);
 
-      String imageSummary = getImageSummary(productId, file, savedImage);
-      log.info("Updated image embedded id : {} ", imageSummary);
+      String embeddedImageId = getImageSummary(productId, file, savedImage);
+      log.info("Updated image embedded id : {} ", embeddedImageId);
     } catch (IOException | SQLException e) {
       throw new RuntimeException(e.getMessage());
     }
@@ -130,8 +130,8 @@ public class ImageService implements IImageService {
         // commits to the database when the method ends.
         savedImage = imageRepository.save(savedImage);
 
-        String imageSummary = getImageSummary(productId, file, savedImage);
-        log.info("Stored image summary embedded Id: {}", imageSummary);
+        String embeddedImageId = getImageSummary(productId, file, savedImage);
+        log.info("Stored image embedded Id: {}", embeddedImageId);
 
         // Create an ImageDto object to return the saved image details
         // The ImageDto object contains the image ID, file name, and download URL.
