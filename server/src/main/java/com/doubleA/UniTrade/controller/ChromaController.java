@@ -3,6 +3,7 @@ package com.doubleA.UniTrade.controller;
 import com.doubleA.UniTrade.request.EmbeddingsDeleteRequest;
 import com.doubleA.UniTrade.response.ApiResponse;
 import com.doubleA.UniTrade.service.chroma.ChromaService;
+import com.doubleA.UniTrade.service.chroma.IChromaService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chroma.vectorstore.ChromaApi;
@@ -17,7 +18,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("${api.prefix}/chroma")
 public class ChromaController {
-  private final ChromaService chromaService;
+  private final IChromaService chromaService;
 
   @GetMapping("/collections")
   public ResponseEntity<ApiResponse> listCollections() {
@@ -25,9 +26,9 @@ public class ChromaController {
     return ResponseEntity.ok(new ApiResponse("collections", collections));
   }
 
-  @GetMapping("/collection")
-  public ResponseEntity<ApiResponse> getCollection(String collectionName) {
-    Collection collection = chromaService.getCollectionById(collectionName);
+  @GetMapping("/collection/{collectionName}")
+  public ResponseEntity<ApiResponse> getCollectionByName(@PathVariable String collectionName) {
+    Collection collection = chromaService.getCollectionByName(collectionName);
     return ResponseEntity.ok(new ApiResponse("collections", collection));
   }
 
@@ -35,20 +36,20 @@ public class ChromaController {
   public ResponseEntity<ApiResponse> deleteCollection(@PathVariable String collectionName) {
     chromaService.deleteCollection(collectionName);
     return ResponseEntity.ok(
-        new ApiResponse("Collection deleted!", collectionName + " was successfully deleted"));
+        new ApiResponse("Collection ", collectionName + " was successfully deleted"));
   }
 
   @DeleteMapping("/collection/embeddings/delete")
   public ResponseEntity<ApiResponse> deleteEmbeddings(
       @RequestBody EmbeddingsDeleteRequest request) {
     chromaService.deleteEmbeddingsByCollectionId(request);
-    return ResponseEntity.ok(new ApiResponse("Embeddings deleted successfully!", null));
+    return ResponseEntity.ok(new ApiResponse("Embeddings deleted successfully.", null));
   }
 
   @GetMapping("/collection/{collectionId}/embeddings")
   public ResponseEntity<ApiResponse> getEmbeddings(@PathVariable String collectionId) {
     ChromaApi.GetEmbeddingResponse embeddings = chromaService.getEmbeddings(collectionId);
     log.info("embeddings: {}", embeddings);
-    return ResponseEntity.ok(new ApiResponse("Embeddings Found!", embeddings));
+    return ResponseEntity.ok(new ApiResponse("Success", embeddings));
   }
 }

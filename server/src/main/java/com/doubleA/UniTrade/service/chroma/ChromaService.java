@@ -54,7 +54,7 @@ public class ChromaService implements IChromaService {
 
   @Override
   // to get description of the collection so we know what the collection contains.
-  public Collection getCollectionById(String collectionName) {
+  public Collection getCollectionByName(String collectionName) {
     Collection collection = chromaApi.getCollection(tenantName, databaseName, collectionName);
     if (collection == null) {
       throw new EntityNotFoundException("No Collection Found for " + collectionName);
@@ -68,10 +68,14 @@ public class ChromaService implements IChromaService {
   // Similar items will have similar embeddings which allow search of similar items instead of exact
   // keyword.
   public GetEmbeddingResponse getEmbeddings(String collectionId) {
-    ChromaApi.GetEmbeddingsRequest request =
-        new ChromaApi.GetEmbeddingsRequest(null, null, 4, 0, all);
-    // getEmbeddings retrieves the data stored in a collection.
-    return chromaApi.getEmbeddings(tenantName, databaseName, collectionId, request);
+    try {
+      ChromaApi.GetEmbeddingsRequest request =
+          new ChromaApi.GetEmbeddingsRequest(null, null, 4, 0, all);
+      // getEmbeddings retrieves the data stored in a collection.
+      return chromaApi.getEmbeddings(tenantName, databaseName, collectionId, request);
+    } catch (Exception e) {
+      throw new RuntimeException("Failed to get embeddings: " + collectionId);
+    }
   }
 
   @Override
@@ -85,7 +89,7 @@ public class ChromaService implements IChromaService {
         request.getImageId(),
         request.getCollectionName());
     // Use collection name to find the collection then get the id of the collection.
-    String collectionId = getCollectionById(request.getCollectionName()).id();
+    String collectionId = getCollectionByName(request.getCollectionName()).id();
     // Use findIdsToDelete method defined later to find the id of the embedding through
     // going to the specific collection (collectionId) and use image id to find the embedding in the
     // collection.

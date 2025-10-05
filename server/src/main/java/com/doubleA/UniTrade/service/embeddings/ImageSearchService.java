@@ -26,7 +26,7 @@ public class ImageSearchService {
   // product id is needed to know which product the embedding is associated with
   // to display products similar to the image provided for searching.
   public List<String> saveEmbeddings(MultipartFile image, Long productId, Long imageId)
-      throws IOException {
+      throws IOException, java.io.IOException {
     String imageDescription = llmServiceUtil.descriptionImage(image);
     Map<String, Object> metadata = new HashMap<>();
     metadata.put("productId", productId);
@@ -42,7 +42,8 @@ public class ImageSearchService {
     return List.of("Successfully added to vector store");
   }
 
-  public List<Long> searchImageSimilarity(MultipartFile queryImage) throws IOException {
+  public List<Long> searchImageSimilarity(MultipartFile queryImage)
+      throws IOException, java.io.IOException {
     String imageDescription = llmServiceUtil.descriptionImage(queryImage);
     SearchRequest searchRequest =
         SearchRequest.builder().query(imageDescription).topK(10).similarityThreshold(0.85f).build();
