@@ -70,7 +70,7 @@ public class ChromaService implements IChromaService {
   public GetEmbeddingResponse getEmbeddings(String collectionId) {
     try {
       ChromaApi.GetEmbeddingsRequest request =
-          new ChromaApi.GetEmbeddingsRequest(null, null, 4, 0, all);
+          new ChromaApi.GetEmbeddingsRequest(null, null, 50, 0, all);
       // getEmbeddings retrieves the data stored in a collection.
       return chromaApi.getEmbeddings(tenantName, databaseName, collectionId, request);
     } catch (Exception e) {

@@ -6,11 +6,13 @@ import com.doubleA.UniTrade.dtos.ProductDto;
 import com.doubleA.UniTrade.repository.*;
 import com.doubleA.UniTrade.request.AddProductRequest;
 import com.doubleA.UniTrade.request.ProductUpdateRequest;
+import com.doubleA.UniTrade.service.embeddings.ImageSearchService;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,6 +56,7 @@ public class ProductService implements IProductService {
   private final OrderItemRepository orderItemRepository;
   private final ImageRepository imageRepository;
   private final ModelMapper modelMapper;
+  private final ImageSearchService imageSearchService;
 
   // Change from receive product repository to receive AddProductRequest since we want to check if
   // the new product.
@@ -240,7 +243,7 @@ public class ProductService implements IProductService {
   // removes duplicates using distinct(), and collects the unique brand names into a list.
   @Override
   public List<String> getAllDistinctBrands() {
-    return productRepository.findAll().stream().map(Product :: getBrand).distinct().toList();
+    return productRepository.findAll().stream().map(Product::getBrand).distinct().toList();
   }
 
   @Override
@@ -265,8 +268,14 @@ public class ProductService implements IProductService {
   }
 
   // gets products by category ID using the product repository's findAllByCategoryId method.
-    @Override
-    public List<Product> getProductsByCategoryId(Long categoryId) {
-        return productRepository.findAllByCategoryId(categoryId);
-    }
+  @Override
+  public List<Product> getProductsByCategoryId(Long categoryId) {
+    return productRepository.findAllByCategoryId(categoryId);
+  }
+
+  @Override
+  public List<Product> searchProductsByImage(MultipartFile image) {
+    List<Long> productIds = imageSearchService.searchImageSimilarity(image);
+    return productRepository.findAllById(productIds);
+  }
 }

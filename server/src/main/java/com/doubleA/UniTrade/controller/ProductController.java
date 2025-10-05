@@ -6,19 +6,20 @@ import com.doubleA.UniTrade.dtos.ProductDto;
 import com.doubleA.UniTrade.request.ProductUpdateRequest;
 import com.doubleA.UniTrade.model.Product;
 import com.doubleA.UniTrade.service.product.IProductService;
-import jakarta.persistence.EntityExistsException;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 // Basically, this controller handles all the requests related to products.
 // It maps the incoming HTTP requests to the appropriate service methods and returns the responses.
 @RestController
 @RequiredArgsConstructor
+@Slf4j
 @RequestMapping("${api.prefix}/products")
 public class ProductController {
   private final IProductService productService;
@@ -81,8 +82,8 @@ public class ProductController {
     return ResponseEntity.ok(new ApiResponse("Success", convertedProducts));
   }
 
-  //called method in ProductService to get products by brand
-  //This is for sidebar filter in front end
+  // called method in ProductService to get products by brand
+  // This is for sidebar filter in front end
   @GetMapping("/product/by-brand")
   public ResponseEntity<ApiResponse> findProductsByBrand(@RequestParam String brand) {
     List<Product> products = productService.getProductsByBrand(brand);
@@ -97,13 +98,13 @@ public class ProductController {
     return ResponseEntity.ok(new ApiResponse("Success", convertedProducts));
   }
 
-  //This is for category section in footer
-    @GetMapping("/category/{categoryId}/products")
-    public ResponseEntity<ApiResponse> findProductsByCategoryId(@PathVariable Long categoryId) {
-        List<Product> products = productService.getProductsByCategoryId(categoryId);
-        List<ProductDto> convertedProducts = productService.getConvertedProducts(products);
-        return ResponseEntity.ok(new ApiResponse("Success", convertedProducts));
-    }
+  // This is for category section in footer
+  @GetMapping("/category/{categoryId}/products")
+  public ResponseEntity<ApiResponse> findProductsByCategoryId(@PathVariable Long categoryId) {
+    List<Product> products = productService.getProductsByCategoryId(categoryId);
+    List<ProductDto> convertedProducts = productService.getConvertedProducts(products);
+    return ResponseEntity.ok(new ApiResponse("Success", convertedProducts));
+  }
 
   @GetMapping("/distinct/products")
   public ResponseEntity<ApiResponse> getDistinctProductsByName() {
@@ -112,9 +113,21 @@ public class ProductController {
     return ResponseEntity.ok(new ApiResponse("Success", productDtos));
   }
 
-    @GetMapping("/distinct/brands")
-    public ResponseEntity<ApiResponse> getDistinctBrands() {
+  @GetMapping("/distinct/brands")
+  public ResponseEntity<ApiResponse> getDistinctBrands() {
 
-        return ResponseEntity.ok(new ApiResponse("Success", productService.getAllDistinctBrands()));
-    }
+    return ResponseEntity.ok(new ApiResponse("Success", productService.getAllDistinctBrands()));
+  }
+
+  @PostMapping("/search-by-image")
+  public ResponseEntity<ApiResponse> searchByImage(@RequestParam("image") MultipartFile image)
+      throws IOException {
+    List<Product> products = productService.searchProductsByImage(image);
+    log.info("Found : {} ", products.size() + " products");
+    List<ProductDto> convertedProducts = productService.getConvertedProducts(products);
+    log.info("Found products dto : {} ", products);
+    String message = "Search performed with " + convertedProducts.size() + " results.";
+
+    return ResponseEntity.ok(new ApiResponse(message, convertedProducts));
+  }
 }
