@@ -1,8 +1,10 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllCategories } from "../../store/features/categorySlice";
 import {setSearchQuery, setSelectedCategory, clearFilters} from "../../store/features/searchSlice.js";
 import { useNavigate, useParams } from "react-router-dom";
+import searchIcon from "../../assets/images/upload.svg";
+import ImageSearch from "./ImageSearch";
 
 // Search bar component
 // This component will handle the search functionality
@@ -14,6 +16,7 @@ const SearchBar = () => {
     const { categoryId } = useParams();
     const navigate = useNavigate();
     const categories = useSelector((state) => state.category.categories);
+    const [showImageSearch, setShowImageSearch] = useState(false);
     const { searchQuery, selectedCategory } = useSelector(
         (state) => state.search
     );
@@ -38,8 +41,8 @@ const SearchBar = () => {
 
     const handleClearFilters = () => {
         dispatch(clearFilters());
-        // navigate("/products");
-        }
+        setShowImageSearch(false);
+    };
     const handleSearchQueryChange = (e) => {
         dispatch(setSearchQuery(e.target.value));
     };
@@ -49,14 +52,15 @@ const SearchBar = () => {
     }, [dispatch]);
 
     return (
+        <>
         <div className='search-bar input-group input-group-sm'>
             <select
                 value={selectedCategory}
                 onChange={handleCategoryChange}
                 className='form-control-sm'>
                 <option value='all'>All Category</option>
-                {categories.map((category) => (
-                    <option key={category.id} value={category.name}>
+                {categories.map((category, index) => (
+                    <option key={index} value={category.name}>
                         {category.name}
                     </option>
                 ))}
@@ -66,11 +70,21 @@ const SearchBar = () => {
                 type='text'
                 value={searchQuery}
                 onChange={handleSearchQueryChange}
-                className='form-control' placeholder='Search...' />
+                className='form-control'
+                placeholder='search for product(e.g. watch..)'
+            />
+            <img
+                src={searchIcon}
+                alt='Image Search'
+                className='search-image-icon'
+                onClick={() => setShowImageSearch((prev) => !prev)}
+            />
         <button className='search-button' onClick={handleClearFilters}>
             Clear Filter
         </button>
     </div>
+    {showImageSearch && <ImageSearch />}
+    </>
   );
 };
 

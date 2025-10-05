@@ -24,9 +24,10 @@ export const uploadImages = createAsyncThunk(
 
 export const updateProductImage = createAsyncThunk(
   "image/updateProductImage",
-  async ({ imageId, file }) => {
+  async ({ imageId, file, productId }) => {
     const formData = new FormData();
     formData.append("file", file);
+    formData.append("productId", productId);
     const response = await api.put(`/images/image/${imageId}/update`, formData);
     return response.data;
   }

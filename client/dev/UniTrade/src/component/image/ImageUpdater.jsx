@@ -54,7 +54,7 @@ const ImageUpdater = ({
       let result;
       if (selectedImageId) {
         result = await dispatch(
-          updateProductImage({ imageId: selectedImageId, file: selectedFile })
+          updateProductImage({ imageId: selectedImageId, file: selectedFile, productId })
         ).unwrap();
       } else {
         result = await dispatch(

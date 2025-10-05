@@ -15,7 +15,7 @@ const Home = () => {
     const dispatch = useDispatch();
     const [filteredProducts, setFilteredProducts] = useState([]);
     const products = useSelector((state) => state.product.distinctProducts);
-    const { searchQuery, selectedCategory } = useSelector(
+    const { searchQuery, selectedCategory, imageSearchResults } = useSelector(
         (state) => state.search
     );
     const { itemsPerPage, currentPage } = useSelector(
@@ -38,10 +38,16 @@ const Home = () => {
                     .toLowerCase()
                     .includes(selectedCategory.toLowerCase());
 
-            return matchesQuery && matchesCategory;
+            const matchesImageSearch =
+                imageSearchResults.length > 0
+                    ? imageSearchResults.some((result) =>
+                        product.name.toLowerCase().includes(result.name.toLowerCase())
+                    )
+                    : true;
+            return matchesQuery && matchesCategory && matchesImageSearch;
         });
         setFilteredProducts(results);
-    }, [searchQuery, selectedCategory, products]);
+    }, [searchQuery, selectedCategory, products, imageSearchResults]);
 
     useEffect(() => {
         dispatch(setTotalItems(filteredProducts.length));
