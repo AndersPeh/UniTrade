@@ -89,6 +89,7 @@ public class ImageSearchService {
       return searchResult.stream()
           .map(doc -> doc.getMetadata().get("productId"))
           .filter(Objects::nonNull)
+          // It is safer to convert the object to String first, then only to Long to avoid errors.
           .map(Object::toString)
           .map(Long::valueOf)
           .collect(Collectors.toList());
