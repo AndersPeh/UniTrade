@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import {
   getProductById,
   updateProduct,
@@ -12,19 +12,19 @@ import CategorySelector from "../common/CategorySelector";
 import { toast, ToastContainer } from "react-toastify";
 import ProductImage from "../utils/ProductImage";
 import ImageUpdater from "../image/ImageUpdater";
+import { CircularProgress } from "@mui/material";
 
-// ProductUpdate Component
-// This component allows users to update product details such as name, brand, price, inventory,
-// description, category, and images. It fetches the current product details using the product ID
-// from the URL parameters and populates the form fields. Users can also add, edit, or delete product images.
 const ProductUpdate = () => {
   const { productId } = useParams();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [showNewCategoryInput, setShowNewCategoryInput] = useState(false);
   const [newCategory, setNewCategory] = useState("");
   const [showNewBrandInput, setShowNewBrandInput] = useState(false);
   const [newBrand, setNewBrand] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [deletingImageId, setDeletingImageId] = useState(null);
 
   const [showImageModal, setShowImageModal] = useState(false);
   const [selectedImageId, setSelectedImageId] = useState(null);
@@ -47,7 +47,7 @@ const ProductUpdate = () => {
         const result = await dispatch(getProductById(productId)).unwrap();
         setUpdatedProduct(result);
       } catch (error) {
-        toast.error(error.message);
+        toast.error(error?.message || "Failed to load product");
       } finally {
         setTimeout(() => {
           setIsLoading(false);
@@ -84,27 +84,49 @@ const ProductUpdate = () => {
 
   const handleUpdateProduct = async (e) => {
     e.preventDefault();
+    
+    setIsUpdating(true);
+    
     try {
       const result = await dispatch(
         updateProduct({ productId, updatedProduct })
       ).unwrap();
-      toast.success(result.message);
+      
+      toast.success(result?.message || "Product updated successfully!");
+      
+      // Optional: Navigate back to products list after successful update
+      setTimeout(() => {
+        navigate("/products");
+      }, 2000);
+      
     } catch (error) {
-      toast.error(error.message);
+      console.error("Update error:", error);
+      toast.error(error?.message || "Failed to update product. Please try again.");
+    } finally {
+      setIsUpdating(false);
     }
   };
 
   const handleDeleteImage = async (imageId) => {
+    if (!window.confirm("Are you sure you want to delete this image?")) {
+      return;
+    }
+
+    setDeletingImageId(imageId);
+    
     try {
       const result = await dispatch(deleteProductImage({ imageId })).unwrap();
-      toast.success(result.message);
+      toast.success(result?.message || "Image deleted successfully!");
 
       setUpdatedProduct((prevProduct) => ({
         ...prevProduct,
         images: prevProduct.images.filter((image) => image.id !== imageId),
       }));
     } catch (error) {
-      toast.error(error.message);
+      console.error("Delete image error:", error);
+      toast.error(error?.message || "Failed to delete image. Please try again.");
+    } finally {
+      setDeletingImageId(null);
     }
   };
 
@@ -136,11 +158,10 @@ const ProductUpdate = () => {
       <ToastContainer />
       <div className='row'>
         <div className='col-md-6 me-4'>
-          <h4 className='mb-4'> Update Product</h4>
+          <h4 className='mb-4'>Update Product</h4>
           <form onSubmit={handleUpdateProduct}>
             <div className='mb-3'>
-              <label className='form-label'>Name :</label>
-
+              <label className='form-label'>Name:</label>
               <input
                 className='form-control'
                 type='text'
@@ -149,6 +170,7 @@ const ProductUpdate = () => {
                 value={updatedProduct.name}
                 onChange={handleChange}
                 required
+                disabled={isUpdating}
               />
             </div>
 
@@ -161,6 +183,7 @@ const ProductUpdate = () => {
                 value={updatedProduct.price}
                 onChange={handleChange}
                 required
+                disabled={isUpdating}
               />
             </div>
 
@@ -173,6 +196,7 @@ const ProductUpdate = () => {
                 value={updatedProduct.inventory}
                 onChange={handleChange}
                 required
+                disabled={isUpdating}
               />
             </div>
 
@@ -184,8 +208,10 @@ const ProductUpdate = () => {
                 setShowNewBrandInput={setShowNewBrandInput}
                 newBrand={newBrand}
                 setNewBrand={setNewBrand}
+                disabled={isUpdating}
               />
             </div>
+            
             <div className='mb-3'>
               <CategorySelector
                 selectedCategory={updatedProduct.category.name}
@@ -194,6 +220,7 @@ const ProductUpdate = () => {
                 setShowNewCategoryInput={setShowNewCategoryInput}
                 newCategory={newCategory}
                 setNewCategory={setNewCategory}
+                disabled={isUpdating}
               />
             </div>
 
@@ -205,31 +232,68 @@ const ProductUpdate = () => {
                 value={updatedProduct.description}
                 onChange={handleChange}
                 required
+                disabled={isUpdating}
               />
             </div>
 
-            <button type='submit' className='btn btn-secondary btn-sm'>
-              Save product update
+            <button 
+              type='submit' 
+              className='btn btn-secondary btn-sm'
+              disabled={isUpdating}
+              style={{
+                minWidth: '180px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px'
+              }}
+            >
+              {isUpdating ? (
+                <>
+                  <CircularProgress size={16} color="inherit" />
+                  <span>Updating...</span>
+                </>
+              ) : (
+                'Save product update'
+              )}
             </button>
           </form>
         </div>
 
         <div className='col-md-3'>
+          <h5 className='mb-3'>Product Images</h5>
           <table className='table table-bordered text-center'>
             <tbody>
-              {updatedProduct.images.map((image, index) => (
+              {updatedProduct.images && updatedProduct.images.map((image, index) => (
                 <tr key={index}>
                   <td className='update-image-container'>
                     <ProductImage productId={image.id} />
 
-                    <div className='d-flex gap-4 mb-2 mt-2'>
-                      <Link to={"#"} onClick={() => handleEditImage(image.id)}>
+                    <div className='d-flex gap-4 mb-2 mt-2 justify-content-center'>
+                      <Link 
+                        to={"#"} 
+                        onClick={() => handleEditImage(image.id)}
+                        style={{ 
+                          pointerEvents: deletingImageId === image.id ? 'none' : 'auto',
+                          opacity: deletingImageId === image.id ? 0.5 : 1
+                        }}
+                      >
                         edit
                       </Link>
                       <Link
                         to={"#"}
-                        onClick={() => handleDeleteImage(image.id)}>
-                        remove
+                        onClick={() => handleDeleteImage(image.id)}
+                        style={{ 
+                          color: 'red',
+                          pointerEvents: deletingImageId === image.id ? 'none' : 'auto',
+                          opacity: deletingImageId === image.id ? 0.5 : 1
+                        }}
+                      >
+                        {deletingImageId === image.id ? (
+                          <CircularProgress size={14} color="inherit" />
+                        ) : (
+                          'remove'
+                        )}
                       </Link>
                     </div>
                   </td>
@@ -237,8 +301,12 @@ const ProductUpdate = () => {
               ))}
             </tbody>
           </table>
-          <Link to={"#"} onClick={() => handleAddImage(productId)}>
-            Add Image
+          <Link 
+            to={"#"} 
+            onClick={() => handleAddImage(productId)}
+            className="btn btn-outline-secondary btn-sm"
+          >
+            + Add Image
           </Link>
         </div>
       </div>

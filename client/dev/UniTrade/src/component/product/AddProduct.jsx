@@ -4,13 +4,9 @@ import { useDispatch } from "react-redux";
 import { toast, ToastContainer } from "react-toastify";
 import BrandSelector from "../common/BrandSelector";
 import CategorySelector from "../common/CategorySelector";
-import { Stepper, Step, StepLabel } from "@mui/material";
+import { Stepper, Step, StepLabel, CircularProgress } from "@mui/material";
 import ImageUploader from "../common/ImageUploader";
 
-// AddProduct Component
-// This component allows users to add a new product with details like name, description, price, brand, category, and inventory
-// It includes a stepper to guide users through adding product details
-// and uploading product images
 const AddProduct = () => {
   const dispatch = useDispatch();
   const [showNewBrandInput, setShowNewBrandInput] = useState(false);
@@ -18,6 +14,7 @@ const AddProduct = () => {
   const [newBrand, setNewBrand] = useState("");
   const [newCategory, setNewCategory] = useState("");
   const [activeStep, setActiveStep] = useState(0);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const steps = ["Add New Product", "Upload Product Image"];
   const [productId, setProductId] = useState(null);
 
@@ -58,15 +55,21 @@ const AddProduct = () => {
 
   const handleAddNewProduct = async (e) => {
     e.preventDefault();
+    
+    setIsSubmitting(true);
+    
     try {
       const result = await dispatch(addNewProduct(product)).unwrap();
       console.log("The add product result : ", result);
       setProductId(result.id);
-      toast.success(result.message);
+      toast.success("Product added successfully! Now upload product images.");
       resetForm();
       setActiveStep(1);
     } catch (error) {
-      toast.error(error.message);
+      console.error("Add product error:", error);
+      toast.error(error?.message || "Failed to add product. Please try again.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -116,11 +119,12 @@ const AddProduct = () => {
                     value={product.name}
                     onChange={handleChange}
                     required
+                    disabled={isSubmitting}
                   />
                 </div>
 
                 <div className='mb-3'>
-                  <label htmlFor='name' className='form-label'>
+                  <label htmlFor='price' className='form-label'>
                     Price:
                   </label>
                   <input
@@ -131,11 +135,12 @@ const AddProduct = () => {
                     value={product.price}
                     onChange={handleChange}
                     required
+                    disabled={isSubmitting}
                   />
                 </div>
 
                 <div className='mb-3'>
-                  <label htmlFor='name' className='form-label'>
+                  <label htmlFor='inventory' className='form-label'>
                     Inventory:
                   </label>
                   <input
@@ -146,6 +151,7 @@ const AddProduct = () => {
                     value={product.inventory}
                     onChange={handleChange}
                     required
+                    disabled={isSubmitting}
                   />
                 </div>
 
@@ -157,6 +163,7 @@ const AddProduct = () => {
                     setShowNewBrandInput={setShowNewBrandInput}
                     newBrand={newBrand}
                     setNewBrand={setNewBrand}
+                    disabled={isSubmitting}
                   />
                 </div>
 
@@ -168,11 +175,12 @@ const AddProduct = () => {
                     setShowNewCategoryInput={setShowNewCategoryInput}
                     newCategory={newCategory}
                     setNewCategory={setNewCategory}
+                    disabled={isSubmitting}
                   />
                 </div>
 
                 <div className='mb-3'>
-                  <label htmlFor='name' className='form-label'>
+                  <label htmlFor='description' className='form-label'>
                     Description:
                   </label>
                   <textarea
@@ -182,11 +190,30 @@ const AddProduct = () => {
                     value={product.description}
                     onChange={handleChange}
                     required
+                    disabled={isSubmitting}
                   />
                 </div>
 
-                <button type='submit' className='btn btn-secondary btn-sm'>
-                  Save Product
+                <button 
+                  type='submit' 
+                  className='btn btn-secondary btn-sm'
+                  disabled={isSubmitting}
+                  style={{
+                    minWidth: '150px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '8px'
+                  }}
+                >
+                  {isSubmitting ? (
+                    <>
+                      <CircularProgress size={16} color="inherit" />
+                      <span>Saving...</span>
+                    </>
+                  ) : (
+                    'Save Product'
+                  )}
                 </button>
               </form>
             )}
@@ -194,7 +221,7 @@ const AddProduct = () => {
               <div className='container'>
                 <ImageUploader productId={productId} />
                 <button
-                  className='btn btn-secondary btn-s mt-3'
+                  className='btn btn-secondary btn-sm mt-3'
                   onClick={handlePreviousStep}>
                   Previous
                 </button>
