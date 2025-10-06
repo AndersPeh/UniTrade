@@ -14,11 +14,6 @@ import { useLocation, useParams } from "react-router-dom";
 import LoadSpinner from "../common/LoadSpinner";
 import { ToastContainer } from "react-toastify";
 
-// Product Page
-// This page will contain the search bar and sidebar
-// It's also handle the filtering of products based on search query and category
-// The filtered products will be passed to the ProductCard component to display the products
-
 const Products = () => {
     const [filteredProducts, setFilteredProducts] = useState([]);
     const dispatch = useDispatch();
@@ -30,11 +25,6 @@ const Products = () => {
         (state) => state.pagination
     );
     const isLoading = useSelector((state) => state.product.isLoading);
-
-    // Fetch all products on component mount
-    // and whenever the search query or selected category changes
-    // Then filter the products based on the search query and selected category
-    // Only automatically runs again when filtering or search query changes
 
     const { name } = useParams();
     const { categoryId } = useParams();
@@ -53,40 +43,41 @@ const Products = () => {
     useEffect(() => {
         dispatch(setInitialSearchQuery(initialSearchQuery));
     }, [initialSearchQuery, dispatch]);
-    // filtering logic
-    // Pretty much checks if the product name or category includes the search query or selected category
-    // Also checks if the product brand is in the selected brands array
+
     useEffect(() => {
-    // If we have image search results, ONLY show those
-    if (imageSearchResults.length > 0) {
-        setFilteredProducts(imageSearchResults);
-        return;
-    }
+        // If we have image search results, ONLY show those
+        if (imageSearchResults.length > 0) {
+            setFilteredProducts(imageSearchResults);
+            return;
+        }
 
-    // Otherwise, apply normal filters
-    const results = products.filter((product) => {
-        const matchesQuery = product.name
-            .toLowerCase()
-            .includes(searchQuery.toLowerCase());
+        // Otherwise, apply normal filters with null safety
+        const results = products.filter((product) => {
+            const matchesQuery = product.name
+                ? product.name.toLowerCase().includes(searchQuery.toLowerCase())
+                : false;
 
-        const matchesCategory =
-            selectedCategory === "all" ||
-            product.category.name
-                .toLowerCase()
-                .includes(selectedCategory.toLowerCase());
+            const matchesCategory =
+                selectedCategory === "all" ||
+                (product.category && product.category.name
+                    ? product.category.name
+                          .toLowerCase()
+                          .includes(selectedCategory.toLowerCase())
+                    : false);
 
-        const matchesBrand =
-            selectedBrands.length === 0 ||
-            selectedBrands.some((selectedBrand) =>
-                product.brand.toLowerCase().includes(selectedBrand.toLowerCase())
-            );
+            const matchesBrand =
+                selectedBrands.length === 0 ||
+                (product.brand
+                    ? selectedBrands.some((selectedBrand) =>
+                          product.brand.toLowerCase().includes(selectedBrand.toLowerCase())
+                      )
+                    : false);
 
-        return matchesQuery && matchesCategory && matchesBrand;
-    });
-    setFilteredProducts(results);
-}, [searchQuery, selectedCategory, selectedBrands, products, imageSearchResults]);
-    // Pagination logic
-    // Pretty much slice filtered product list to show only a certain number of products per page
+            return matchesQuery && matchesCategory && matchesBrand;
+        });
+        setFilteredProducts(results);
+    }, [searchQuery, selectedCategory, selectedBrands, products, imageSearchResults]);
+
     useEffect(() => {
         dispatch(setTotalItems(filteredProducts.length));
     }, [filteredProducts, dispatch]);
@@ -106,29 +97,28 @@ const Products = () => {
         );
     }
 
-
     return (
         <>
-        <ToastContainer />
-        <div className="d-flex justify-content-center">
-            <div className="col-md-6 mt-2">
-              <div className='search-bar-input-group'>
-                  <SearchBar/>
-                  </div>
+            <ToastContainer />
+            <div className="d-flex justify-content-center">
+                <div className="col-md-6 mt-2">
+                    <div className='search-bar-input-group'>
+                        <SearchBar/>
+                    </div>
+                </div>
             </div>
-        </div>
-        <div className="d-flex">
-            <aside className="sidebar" style={{width: "250px", padding: "1rem"}}>
-                <SideBar/>
-            </aside>
+            <div className="d-flex">
+                <aside className="sidebar" style={{width: "250px", padding: "1rem"}}>
+                    <SideBar/>
+                </aside>
 
-            <section style={{ flex: 1 }}>
-                <ProductCard products={currentProducts} />
-            </section>
-        </div>
+                <section style={{ flex: 1 }}>
+                    <ProductCard products={currentProducts} />
+                </section>
+            </div>
             <Paginator />
         </>
-        );
+    );
 };
 
 export default Products;
