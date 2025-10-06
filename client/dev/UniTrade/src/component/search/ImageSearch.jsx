@@ -3,7 +3,7 @@ import { useDispatch } from "react-redux";
 import { Spinner } from "react-bootstrap";
 import { setImageSearch, searchByImage } from "../../store/features/searchSlice";
 
-const ImageSearch = () => {
+const ImageSearch = ({onSearchComplete}) => {
     const [imageFile, setImageFile] = useState(null);
     const [imagePreview, setImagePreview] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
@@ -40,6 +40,10 @@ const ImageSearch = () => {
         setIsLoading(true);
         try {
             await dispatch(searchByImage(imageFile));
+            // Close the modal after successful search
+            if (onSearchComplete) {
+                onSearchComplete();
+            }
         } catch (error) {
             console.error(error);
         } finally {
