@@ -71,7 +71,7 @@ const ProductDetails = () => {
                         <p className='product-description'>{product.description}</p>
                         <p className='product-name'>Brand: {product.brand}</p>
                         <p className='product-name'>
-                            Rating: <span className='rating'>some stars</span>
+                            Rating: <span className='rating'>⭐⭐⭐⭐⭐</span>
                         </p>
 
                         <StockStatus inventory={product.inventory} />
