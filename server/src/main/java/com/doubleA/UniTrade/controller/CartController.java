@@ -2,6 +2,7 @@ package com.doubleA.UniTrade.controller;
 
 import com.doubleA.UniTrade.dtos.CartDto;
 import com.doubleA.UniTrade.model.Cart;
+import com.doubleA.UniTrade.model.User;
 import com.doubleA.UniTrade.response.ApiResponse;
 import com.doubleA.UniTrade.service.cart.ICartItemService;
 import com.doubleA.UniTrade.service.cart.ICartService;
@@ -16,10 +17,12 @@ import org.springframework.web.bind.annotation.*;
 public class CartController {
 
   private final ICartService cartService;
+  private final IUserService userService;
 
   @GetMapping("/user/{userId}/cart")
   public ResponseEntity<ApiResponse> getUserCart(@PathVariable Long userId) {
-    Cart cart = cartService.getCartByUserId(userId);
+    User user = userService.getUserById(userId);
+    Cart cart = cartService.initialiseNewCartForUser(user);
     CartDto cartDto = cartService.convertToDto(cart);
     return ResponseEntity.ok(new ApiResponse("Success", cartDto));
   }
