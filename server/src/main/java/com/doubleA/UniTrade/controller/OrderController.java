@@ -20,7 +20,7 @@ public class OrderController {
   private final IOrderService orderService;
 
   @PostMapping("/user/{userId}/place-order")
-  public ResponseEntity<ApiResponse> placeOrder(@RequestParam Long userId) {
+  public ResponseEntity<ApiResponse> placeOrder(@PathVariable Long userId) {
     Order order = orderService.placeOrder(userId);
     OrderDto orderDto = orderService.convertToDto(order);
     return ResponseEntity.ok(new ApiResponse("Successful Order", orderDto));

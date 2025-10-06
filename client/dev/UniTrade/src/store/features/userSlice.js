@@ -31,7 +31,7 @@ export const registerUser = createAsyncThunk(
 export const getCountryNames = createAsyncThunk(
   "user/getCountryNames",
   async () => {
-    const response = await axios.get("https://restcountries.com/v3.1/all");
+    const response = await axios.get("https://restcountries.com/v3.1/all?fields=name,cca2");
     const countryNames = response.data.map((country) => ({
       name: country.name.common,
       code: country.cca2,
