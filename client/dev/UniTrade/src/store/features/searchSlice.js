@@ -8,7 +8,7 @@ export const searchByImage = createAsyncThunk(
             const formData = new FormData();
             formData.append("image", imageFile);
 
-            const response = await api.post("/product/search-by-image", formdata);
+            const response = await api.post("/products/search-by-image", formData);
             return response.data; // Assuming the API returns { results: [...] }
 
     }
