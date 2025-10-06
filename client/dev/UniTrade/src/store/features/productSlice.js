@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { api } from "../../component/services/api";
+import { api, privateApi } from "../../component/services/api";
 
 // Fetch all products from the backend
 // This will populate the products array in the Redux store
@@ -9,6 +9,38 @@ export const getAllProducts = createAsyncThunk(
     async () => {
         const response = await api.get("/products/all");
         return response.data.data;
+    }
+);
+
+
+export const addNewProduct = createAsyncThunk(
+    "product/addNewProduct",
+    async (product) => {
+        const response = await privateApi.post("/products/add", product);
+        console.log("The response from the slice : ", response);
+        return response.data.data;
+    }
+);
+
+export const updateProduct = createAsyncThunk(
+    "products/updateProduct",
+    async ({ productId, updatedProduct }) => {
+        const response = await privateApi.put(
+            `/products/product/${productId}/update`,
+            updatedProduct
+        );
+        return response;
+    }
+);
+
+export const deleteProduct = createAsyncThunk(
+    "product/deleteProduct",
+    async (productId) => {
+        const response = await privateApi.delete(
+            `/products/product/${productId}/delete`
+        );
+
+        return response.data;
     }
 );
 
@@ -60,6 +92,7 @@ const initialState = {
     selectedBrands: [],
     quantity: 1,
     errorMessage: null,
+    successMessage: null,
     isLoading: true,
 };
 // Product slice
@@ -79,13 +112,11 @@ const productSlice = createSlice({
                 state.selectedBrands = state.selectedBrands.filter((b) => b !== brand);
             }
         },
-        decreaseQuantity: (state) => {
-            if (state.quantity > 1) {
-                state.quantity--;
-            }
+        setQuantity: (state, action) => {
+            state.quantity = action.payload;
         },
-        increaseQuantity: (state) => {
-            state.quantity++;
+        addBrand: (state, action) => {
+            state.brands.push(action.payload);
         },
     },
 
@@ -115,9 +146,24 @@ const productSlice = createSlice({
                 state.products = action.payload;
                 state.errorMessage = null;
                 state.isLoading = false;
+            })
+            .addCase(addNewProduct.fulfilled, (state, action) => {
+                state.products.push(action.payload);
+                state.errorMessage = null;
+                state.isLoading = false;
+            })
+            .addCase(updateProduct.fulfilled, (state, action) => {
+                state.product = action.payload.data;
+                state.errorMessage = null;
+                state.isLoading = false;
+            })
+            .addCase(deleteProduct.fulfilled, (state, action) => {
+                state.products = state.products.filter(
+                    (product) => product.id !== action.payload.data
+                );
             });
     },
 });
 
-export const { filterByBrands, decreaseQuantity, increaseQuantity  } = productSlice.actions;
+export const { filterByBrands, setQuantity, addBrand  } = productSlice.actions;
 export default productSlice.reducer;

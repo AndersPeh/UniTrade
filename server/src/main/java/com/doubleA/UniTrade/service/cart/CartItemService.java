@@ -1,5 +1,6 @@
 package com.doubleA.UniTrade.service.cart;
 
+import com.doubleA.UniTrade.dtos.CartItemDto;
 import com.doubleA.UniTrade.model.Cart;
 import com.doubleA.UniTrade.model.CartItem;
 import com.doubleA.UniTrade.model.Product;
@@ -8,6 +9,7 @@ import com.doubleA.UniTrade.repository.CartRepository;
 import com.doubleA.UniTrade.service.product.IProductService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -19,9 +21,10 @@ public class CartItemService implements ICartItemService {
   private final CartRepository cartRepository;
   private final ICartService cartService;
   private final IProductService productService;
+  private final ModelMapper modelMapper;
 
   @Override
-  public void addItemToCart(Long cartId, Long productId, int quantity) {
+  public CartItem addItemToCart(Long cartId, Long productId, int quantity) {
     Cart cart = cartService.getCart(cartId);
 
     Product product = productService.getProductById(productId);
@@ -53,6 +56,7 @@ public class CartItemService implements ICartItemService {
     cart.addItem(cartItem);
     cartItemRepository.save(cartItem);
     cartRepository.save(cart);
+    return  cartItem;
   }
 
   @Override
@@ -105,4 +109,8 @@ public class CartItemService implements ICartItemService {
         // If the product that the user wants to add doesnt exist in the cart
         .orElseThrow(() -> new EntityNotFoundException("Cart Not Found"));
   }
+    @Override
+    public CartItemDto convertToDto(CartItem cartItem){
+        return modelMapper.map(cartItem, CartItemDto.class);
+    }
 }

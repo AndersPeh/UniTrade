@@ -12,6 +12,7 @@ import SideBar from "../common/SideBar.jsx";
 import { setInitialSearchQuery } from "../../store/features/searchSlice";
 import { useLocation, useParams } from "react-router-dom";
 import LoadSpinner from "../common/LoadSpinner";
+import { ToastContainer } from "react-toastify";
 
 // Product Page
 // This page will contain the search bar and sidebar
@@ -22,7 +23,7 @@ const Products = () => {
     const [filteredProducts, setFilteredProducts] = useState([]);
     const dispatch = useDispatch();
     const {products, selectedBrands} = useSelector((state) => state.product);
-    const { searchQuery, selectedCategory } = useSelector(
+    const { searchQuery, selectedCategory, imageSearchResults } = useSelector(
         (state) => state.search
     );
     const { itemsPerPage, currentPage } = useSelector(
@@ -72,10 +73,12 @@ const Products = () => {
                 selectedBrands.some((selectedBrand) =>
                     product.brand.toLowerCase().includes(selectedBrand.toLowerCase())
                 );
-            return matchesQuery && matchesCategory && matchesBrand;
+            const matchesImageSearch =
+                imageSearchResults.length > 0 ? imageSearchResults.some((result) => product.name.toLowerCase().include(result.name.toLowerCase())) : true;
+            return matchesQuery && matchesCategory && matchesBrand && matchesImageSearch;
         });
         setFilteredProducts(results);
-    }, [searchQuery, selectedCategory, selectedBrands, products]);
+    }, [searchQuery, selectedCategory, selectedBrands, products, imageSearchResults]);
 
     // Pagination logic
     // Pretty much slice filtered product list to show only a certain number of products per page
@@ -101,6 +104,7 @@ const Products = () => {
 
     return (
         <>
+        <ToastContainer />
         <div className="d-flex justify-content-center">
             <div className="col-md-6 mt-2">
               <div className='search-bar-input-group'>

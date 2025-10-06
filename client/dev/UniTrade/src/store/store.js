@@ -3,14 +3,24 @@ import searchReducer from "../store/features/searchSlice";
 import categoryReducer from "../store/features/categorySlice";
 import productReducer from "../store/features/productSlice";
 import paginationReducer from "./features/paginationSlice";
+import cartReducer from "../store/features/cartSlice";
+import orderReducer from "../store/features/orderSlice";
+import imageReducer from "../store/features/imageSlice";
+import userReducer from "../store/features/userSlice";
+import authReducer from "../store/features/authSlice";
 
 // Configure the Redux store
-// Combine the reducers for search, category, product, and pagination
+// Combine the reducers for search, category, product, pagination, cart
 export const store = configureStore({
   reducer: {
     search: searchReducer,
     category: categoryReducer,
     product: productReducer,
     pagination: paginationReducer,
+    cart : cartReducer,
+      order: orderReducer,
+      image: imageReducer,
+      user: userReducer,
+      auth : authReducer
   },
 });

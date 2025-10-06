@@ -9,12 +9,13 @@ import { toast, ToastContainer } from "react-toastify";
 import { setTotalItems } from "../../store/features/paginationSlice";
 import { getDistinctProductsByName } from "../../store/features/productSlice";
 import LoadSpinner from "../common/LoadSpinner";
+import StockStatus from "../utils/StockStatus";
 
 const Home = () => {
     const dispatch = useDispatch();
     const [filteredProducts, setFilteredProducts] = useState([]);
     const products = useSelector((state) => state.product.distinctProducts);
-    const { searchQuery, selectedCategory } = useSelector(
+    const { searchQuery, selectedCategory, imageSearchResults } = useSelector(
         (state) => state.search
     );
     const { itemsPerPage, currentPage } = useSelector(
@@ -37,10 +38,16 @@ const Home = () => {
                     .toLowerCase()
                     .includes(selectedCategory.toLowerCase());
 
-            return matchesQuery && matchesCategory;
+            const matchesImageSearch =
+                imageSearchResults.length > 0
+                    ? imageSearchResults.some((result) =>
+                        product.name.toLowerCase().includes(result.name.toLowerCase())
+                    )
+                    : true;
+            return matchesQuery && matchesCategory && matchesImageSearch;
         });
         setFilteredProducts(results);
-    }, [searchQuery, selectedCategory, products]);
+    }, [searchQuery, selectedCategory, products, imageSearchResults]);
 
     useEffect(() => {
         dispatch(setTotalItems(filteredProducts.length));
@@ -82,7 +89,7 @@ const Home = () => {
                                     {product.name} - {product.description}
                                 </p>
                                 <h4 className='price'>{product.price}</h4>
-                                <p className='text-success'>{product.inventory} in stock.</p>
+                                <StockStatus inventory={product.inventory} />
                                 <Link
                                     to={`/products/${product.name}`}
                                     className='shop-now-button'>

@@ -1,5 +1,6 @@
 package com.doubleA.UniTrade.controller;
 
+import com.doubleA.UniTrade.dtos.CartDto;
 import com.doubleA.UniTrade.model.Cart;
 import com.doubleA.UniTrade.response.ApiResponse;
 import com.doubleA.UniTrade.service.cart.ICartItemService;
@@ -19,8 +20,8 @@ public class CartController {
   @GetMapping("/user/{userId}/cart")
   public ResponseEntity<ApiResponse> getUserCart(@PathVariable Long userId) {
     Cart cart = cartService.getCartByUserId(userId);
-
-    return ResponseEntity.ok(new ApiResponse("Success", cart));
+    CartDto cartDto = cartService.convertToDto(cart);
+    return ResponseEntity.ok(new ApiResponse("Success", cartDto));
   }
 
   @DeleteMapping("/cart/{cartId}/clear")
