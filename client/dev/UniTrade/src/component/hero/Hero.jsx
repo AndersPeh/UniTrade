@@ -1,30 +1,34 @@
-import React, {useState} from "react";
-import HeroSlider from "../hero/HeroSlider";
+import React, { useState } from "react";
+import HeroSlider from "./HeroSlider";
 import SearchBar from "../search/SearchBar";
-
-// Hero banner component
-// Basically the main banner of the home page
-// It contains the hero slider and search bar component
+import ImageSearch from "../search/ImageSearch";
 
 const Hero = () => {
+    const [showImageSearch, setShowImageSearch] = useState(false);
 
-
-    const [currentSlide] = useState(0);
     return (
-        <div className='hero'>
-            <HeroSlider setCurrentSlide={currentSlide} />
+        <div className='hero-section'>
+            <div className='overlay'></div>
             <div className='hero-content'>
-                <h1>
-                    <span>UniTrade</span>
-                </h1>
-                <SearchBar/>
-                <div className='home-button-container'>
-                    <a href='/products' className='home-shop-button link'>
-                        Shop
-                    </a>
-                    <button className='deals-button'>Flash Deals</button>
-                </div>
+                <h1 className='hero-title'><span className='brand-highlight'>UniTrade</span></h1>
+                {/* <HeroSlider /> */}
+                <SearchBar onImageSearchClick={() => setShowImageSearch(true)} />
             </div>
+
+            {showImageSearch && (
+                <div className='image-search-modal-overlay' onClick={() => setShowImageSearch(false)}>
+                    <div className='image-search-modal-content' onClick={(e) => e.stopPropagation()}>
+                        <button 
+                            className='modal-close-btn' 
+                            onClick={() => setShowImageSearch(false)}
+                        >
+                            ×
+                        </button>
+                        <h2 className='modal-title'>Search by Image</h2>
+                        <ImageSearch onSearchComplete={() => setShowImageSearch(false)} />
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

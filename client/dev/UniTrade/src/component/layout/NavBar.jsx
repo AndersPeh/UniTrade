@@ -31,7 +31,7 @@ const NavBar = () => {
 
 
                 <Navbar.Brand to={"/"} as={Link}>
-                    <span className='shop-home'>UniTrade.com</span>
+                    <span className='shop-home'>UniTrade</span>
                 </Navbar.Brand>
 
 
