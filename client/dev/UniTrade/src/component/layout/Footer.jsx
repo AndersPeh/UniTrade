@@ -15,10 +15,7 @@ const Footer = () => {
         <footer className='mega-footer'>
         <div className='footer-container'>
 
-            <div className='footer-section'>
-                <h3>About us</h3>
-                <p>We are UniTrade!</p>
-        </div>
+
             <div className='footer-section'>
                 <h3>Category</h3>
                 <ul>
@@ -31,7 +28,7 @@ const Footer = () => {
             </div>
             <div className='footer-section'>
                     <h3>Contact</h3>
-                <p>Email: dahed12983@fursee.com</p>
+                <p>Email: Anders@email.com</p>
                 <p>Phone: 040-000-0000</p>
             </div>
             <div className='footer-section'>
