@@ -20,21 +20,20 @@ public class CartService implements ICartService {
   private final CartItemRepository cartItemRepository;
   private final ModelMapper mapper;
 
-
-   @Override
-   public Cart getCart(Long cartId) {
-       Cart cart = cartRepository.findById(cartId)
-               .orElseThrow(() -> new EntityNotFoundException("Cart not found!"));
-       BigDecimal totalAmount = cart.getTotalAmount();
-       cart.setTotalAmount(totalAmount);
-       return cartRepository.save(cart);
-   }
+  @Override
+  public Cart getCart(Long cartId) {
+    Cart cart =
+        cartRepository
+            .findById(cartId)
+            .orElseThrow(() -> new EntityNotFoundException("Cart not found!"));
+    BigDecimal totalAmount = cart.getTotalAmount();
+    cart.setTotalAmount(totalAmount);
+    return cartRepository.save(cart);
+  }
 
   @Override
   public Cart getCartByUserId(Long userId) {
-    return cartRepository
-        .findByUserId(userId)
-        .orElseThrow(() -> new EntityNotFoundException("Cart Not Found"));
+    return cartRepository.findByUserId(userId).orElse(null);
   }
 
   @Override
@@ -63,8 +62,8 @@ public class CartService implements ICartService {
     return cart.getTotalAmount();
   }
 
-    @Override
-    public CartDto convertToDto(Cart cart){
-        return mapper.map(cart, CartDto.class);
-    }
+  @Override
+  public CartDto convertToDto(Cart cart) {
+    return mapper.map(cart, CartDto.class);
+  }
 }
