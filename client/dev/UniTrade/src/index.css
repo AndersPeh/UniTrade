@@ -28,6 +28,54 @@
     text-align: center;
 }
 
+.hero-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 999;
+    overflow-y: auto; 
+    display: flex;
+    align-items: flex-start; 
+    padding-top: 20px; 
+}
+
+/* Modal content wrapper */
+.hero-modal-content {
+    position: relative;
+    max-height: 90vh;
+    overflow-y: auto;
+    margin: 0 auto;
+    max-width: 800px;
+    width: 100%;
+}
+
+/* Ensure the hero section itself allows content to be visible */
+.hero-section {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 20px; 
+}
+
+/* Prevent body scroll lock issues */
+body.modal-open {
+    overflow: auto !important; 
+}
+
+/* Image uploader should not block content */
+.image-uploader {
+    position: relative;
+    min-height: 300px;
+    max-height: 400px;
+    cursor: pointer;
+}
+
 .search-bar {
     display: flex;
     margin: 20px 0;
@@ -489,10 +537,14 @@
     margin: 10px;
 }
 
-.image-search-container
-{
-    text-align: center;
+.image-search-container {
+    position: relative;
+    z-index: 1000;
+    max-height: 90vh; 
+    overflow-y: auto; 
+    padding: 20px;
 }
+
 
 .search-image-icon
 {
