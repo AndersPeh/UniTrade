@@ -46,11 +46,16 @@ const ProductDetails = () => {
 
     // logic to increase/decrease product quantity
     const handleIncreaseQuantity = () => {
+        if(product.inventory>quantity){
         dispatch(setQuantity(quantity + 1));
+
+        }
     };
 
     const handleDecreaseQuantity = () => {
+        if(quantity>0){
         dispatch(setQuantity(quantity - 1, 1));
+        }
     };
 
     return (
@@ -91,9 +96,9 @@ const ProductDetails = () => {
                                 {" "}
                                 <FaShoppingCart /> Add to cart
                             </button>
-                            <button className='buy-now-button' disabled={productOutOfStock}>
+                            {/* <button className='buy-now-button' disabled={productOutOfStock}>
                                 Buy now
-                            </button>
+                            </button> */}
                         </div>
                     </div>
                 </div>
