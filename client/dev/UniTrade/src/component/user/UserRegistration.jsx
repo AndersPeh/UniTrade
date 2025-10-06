@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Row, Button, Form, Col, Container } from "react-bootstrap";
 import { registerUser } from "../../store/features/userSlice";
 import { useDispatch } from "react-redux";
 import { toast, ToastContainer } from "react-toastify";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import AddressForm from "../common/AddressForm";
 
 // UserRegistration Component
@@ -12,6 +13,7 @@ import AddressForm from "../common/AddressForm";
 // On form submission, it dispatches a Redux action to register the user
 const UserRegistration = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const [user, setUser] = useState({
     firstName: "",
@@ -70,6 +72,10 @@ const UserRegistration = () => {
       ).unwrap();
       resetForm();
       toast.success(response.message);
+      navigate("/login");
+      // setTimeout(() => {
+      //           navigate("/login");
+      //       }, 1500);
     } catch (error) {
       toast.error(error.message);
     }
@@ -167,7 +173,7 @@ const UserRegistration = () => {
           </Button>
         </div>
         <div className='text-center mt-4 mb-4'>
-          Have an account already?{" "}
+          Alr?{" "}
           <Link to={"/login"} style={{ textDecoration: "none" }}>
             Login here
           </Link>

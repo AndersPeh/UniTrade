@@ -46,11 +46,16 @@ const ProductDetails = () => {
 
     // logic to increase/decrease product quantity
     const handleIncreaseQuantity = () => {
+        if(product.inventory>quantity){
         dispatch(setQuantity(quantity + 1));
+
+        }
     };
 
     const handleDecreaseQuantity = () => {
+        if(quantity>0){
         dispatch(setQuantity(quantity - 1, 1));
+        }
     };
 
     return (
@@ -71,7 +76,7 @@ const ProductDetails = () => {
                         <p className='product-description'>{product.description}</p>
                         <p className='product-name'>Brand: {product.brand}</p>
                         <p className='product-name'>
-                            Rating: <span className='rating'>some stars</span>
+                            Rating: <span className='rating'>⭐⭐⭐⭐⭐</span>
                         </p>
 
                         <StockStatus inventory={product.inventory} />
@@ -91,9 +96,9 @@ const ProductDetails = () => {
                                 {" "}
                                 <FaShoppingCart /> Add to cart
                             </button>
-                            <button className='buy-now-button' disabled={productOutOfStock}>
+                            {/* <button className='buy-now-button' disabled={productOutOfStock}>
                                 Buy now
-                            </button>
+                            </button> */}
                         </div>
                     </div>
                 </div>
