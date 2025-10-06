@@ -57,29 +57,34 @@ const Products = () => {
     // Pretty much checks if the product name or category includes the search query or selected category
     // Also checks if the product brand is in the selected brands array
     useEffect(() => {
-        const results = products.filter((product) => {
-            const matchesQuery = product.name
+    // If we have image search results, ONLY show those
+    if (imageSearchResults.length > 0) {
+        setFilteredProducts(imageSearchResults);
+        return;
+    }
+
+    // Otherwise, apply normal filters
+    const results = products.filter((product) => {
+        const matchesQuery = product.name
+            .toLowerCase()
+            .includes(searchQuery.toLowerCase());
+
+        const matchesCategory =
+            selectedCategory === "all" ||
+            product.category.name
                 .toLowerCase()
-                .includes(searchQuery.toLowerCase());
+                .includes(selectedCategory.toLowerCase());
 
-            const matchesCategory =
-                selectedCategory === "all" ||
-                product.category.name
-                    .toLowerCase()
-                    .includes(selectedCategory.toLowerCase());
+        const matchesBrand =
+            selectedBrands.length === 0 ||
+            selectedBrands.some((selectedBrand) =>
+                product.brand.toLowerCase().includes(selectedBrand.toLowerCase())
+            );
 
-            const matchesBrand =
-                selectedBrands.length === 0 ||
-                selectedBrands.some((selectedBrand) =>
-                    product.brand.toLowerCase().includes(selectedBrand.toLowerCase())
-                );
-            const matchesImageSearch =
-                imageSearchResults.length > 0 ? imageSearchResults.some((result) => product.name.toLowerCase().include(result.name.toLowerCase())) : true;
-            return matchesQuery && matchesCategory && matchesBrand && matchesImageSearch;
-        });
-        setFilteredProducts(results);
-    }, [searchQuery, selectedCategory, selectedBrands, products, imageSearchResults]);
-
+        return matchesQuery && matchesCategory && matchesBrand;
+    });
+    setFilteredProducts(results);
+}, [searchQuery, selectedCategory, selectedBrands, products, imageSearchResults]);
     // Pagination logic
     // Pretty much slice filtered product list to show only a certain number of products per page
     useEffect(() => {

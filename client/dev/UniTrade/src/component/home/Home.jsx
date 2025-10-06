@@ -5,7 +5,7 @@ import { Card } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import ProductImage from "../utils/ProductImage";
 import { useSelector, useDispatch } from "react-redux";
-import { toast, ToastContainer } from "react-toastify";
+import {  ToastContainer } from "react-toastify";
 import { setTotalItems } from "../../store/features/paginationSlice";
 import { getDistinctProductsByName } from "../../store/features/productSlice";
 import LoadSpinner from "../common/LoadSpinner";
@@ -28,26 +28,27 @@ const Home = () => {
     }, [dispatch]);
 
     useEffect(() => {
-        const results = products.filter((product) => {
-            const matchesQuery = product.name
-                .toLowerCase()
-                .includes(searchQuery.toLowerCase());
-            const matchesCategory =
-                selectedCategory === "all" ||
-                product.category.name
-                    .toLowerCase()
-                    .includes(selectedCategory.toLowerCase());
+    // If we have image search results, ONLY show those
+    if (imageSearchResults.length > 0) {
+        setFilteredProducts(imageSearchResults);
+        return;
+    }
 
-            const matchesImageSearch =
-                imageSearchResults.length > 0
-                    ? imageSearchResults.some((result) =>
-                        product.name.toLowerCase().includes(result.name.toLowerCase())
-                    )
-                    : true;
-            return matchesQuery && matchesCategory && matchesImageSearch;
-        });
-        setFilteredProducts(results);
-    }, [searchQuery, selectedCategory, products, imageSearchResults]);
+    // Otherwise, apply normal filters
+    const results = products.filter((product) => {
+        const matchesQuery = product.name
+            .toLowerCase()
+            .includes(searchQuery.toLowerCase());
+        const matchesCategory =
+            selectedCategory === "all" ||
+            product.category.name
+                .toLowerCase()
+                .includes(selectedCategory.toLowerCase());
+
+        return matchesQuery && matchesCategory;
+    });
+    setFilteredProducts(results);
+}, [searchQuery, selectedCategory, products, imageSearchResults]);
 
     useEffect(() => {
         dispatch(setTotalItems(filteredProducts.length));
